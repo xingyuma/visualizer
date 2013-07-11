@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<head>
+    <meta charset="utf-8">
+    <title>Name object test</title>
+	
+    <script src="../build/ndn.js"></script>
+
+    <script>
+
+function testName () {
+    var result = document.getElementById('result');
+    result.innerHTML = "";
+
+    var n0 = new Name("/%C1.M.S.localhost/%C1.M.SRV/ccnd/KEY");
+    result.innerHTML += "<p>Name object for '/%C1.M.S.localhost/%C1.M.SRV/ccnd/KEY':"
+                      + "<br />URI representation: " + n0.to_uri() + "</p>";
+    console.log(n0.to_xml());
+    
+    var ndn = new NDN();
+    var n1 = new Name('/ndn.js/%C1%00/test01');
+    n1.appendKeyID(ndn.getDefaultKey()).appendVersion().appendSegment(0);
+
+    result.innerHTML += "<p>Name for the NDN default key:"
+                      + "<br />URI representation: " + n1.to_uri() + "</p>";
+
+    var n2 = new Name('/a/b/c.txt/');
+    result.innerHTML += "A new Name object:";
+    result.innerHTML += "<br />URI representation: " + n2.to_uri();
+    var n3 = new Name(n2);
+    result.innerHTML += "<br />Make a copy:";
+    result.innerHTML += "<br />URI representation: " + n3.to_uri();
+    result.innerHTML += "<br />Make some change to the copy:";
+    n3.appendVersion().appendSegment(0);
+    result.innerHTML += "<br />URI representation: " + n3.to_uri();
+    result.innerHTML += "<br />Original name:";
+    result.innerHTML += "<br />URI representation: " + n2.to_uri();
+
+
+    var n4 = new Name('/a/b');
+    var n5 = new Name('/a/b/c/d');
+
+    result.innerHTML += "<p>" + n4.to_uri() + ' is a prefix of ' + n5.to_uri() + '? ' + n4.isPrefixOf(n5) + "</p>";
+    
+}
+
+    </script>
+
+</head>
+
+<body onload="testName()">
+    
+    <div id="result" style="font-family: Monaco">
+    	
+    </div>
+
+</body>
+</html>

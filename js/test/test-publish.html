@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<head>
+    <meta charset="utf-8">
+    <title>NDN publishing test</title>
+	
+    <script src="../build/ndn.js"></script>
+
+    <script>
+
+function testPublish () {
+    var onInterest = function (inst) {
+        console.log('Interest received in callback.');
+        console.log(inst.name.to_uri());
+        
+        var nameStr = inst.name.getName();
+        if (nameStr == "/aa/bb/1.txt")
+        {
+            var name = new Name("/aa/bb/ID-CERT");
+            //                console.log(name);
+            //               console.log(typeof name);
+            var keyname = new KeyName(name);
+        }
+        else
+        {
+            if (nameStr == "/aa/bb/ID-CERT" || nameStr == "/aa/ID-CERT"){
+                var name = new Name("/aa/ID-CERT");
+                var keyname = new KeyName(name);
+                content = globalKeyManager.publicKey;
+            }
+        }
+        var keyPara = {KeyName: keyname};
+        var si = new SignedInfo();
+        var mykey = ndn.getDefaultKey();
+        si.setFields(keyname,keyPara);
+        var co = new ContentObject(inst.name, ('NDN.JS needs refactoring. ' + inst.name.to_uri()),si);
+        
+        co.sign(mykey);
+//        console.log(co.content.);
+        try {
+            ndn.send(co);
+        } catch (e) {
+            console.log(e.toString());
+        }
+    };
+
+    var ndn = new NDN();
+    var mykey = ndn.getDefaultKey();
+
+    ndn.onopen = function () {
+        var n1 = new Name('/aa/bb/1.txt');
+        ndn.registerPrefix(n1, onInterest);
+        var n2 = new Name('/aa/bb/ID-CERT');
+        ndn.registerPrefix(n2, onInterest);
+        var n3 = new Name('/aa/ID-CERT');
+        ndn.registerPrefix(n3, onInterest);
+        console.log('Prefix registered.');
+    };
+
+    
+    ndn.connect();
+    
+    console.log('Started...');
+}
+
+    </script>
+
+</head>
+
+<body onload="testPublish()">
+    
+    <div id="result" style="font-family: Monaco">
+    	Check JavaScript console now.
+    </div>
+
+</body>
+</html>
