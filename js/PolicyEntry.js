@@ -23,16 +23,11 @@ PolicyEntry.prototype.findType = function(_item){
 };
 
 PolicyEntry.prototype.checkMatching = function(name,keyLocator){
-//    console.log(name);
-//    console.log(keyLocator);
     var nameObject = new Name(name);
-  //  console.log(this.prefix.getName());
     var locatorObject = new Name(keyLocator);
     prefixObj = new Name(this.prefix);
     authorityObj = new Name(this.authority);
-    if (prefixObj.match(nameObject) == true  && locatorObject.equalsName(authorityObj)){
-//    console.log(name.indexOf(this.prefix));
-//     if (name.indexOf(this.prefix) == 0 && keyLocator == this.authority) {
+    if (prefixObj.matches(nameObject) == true  && locatorObject.equals(authorityObj)){
 		return true;
 	}
 };
@@ -68,18 +63,7 @@ function Policy() {
         return false;
     };
 };
-/*
-var CertificateEntry = function CertificateEntry(contentObject){
-    this.name = contentObject.name;
-    this.content = contentObject.content;
-    this.signature = contentObject.signature;
-    this.signedInfo = contentObject.signedInfo;
-};
 
-CertificateEntry.prototype.findType = function(_item){
-
-};
-*/
 function CertificateStore(){
     this.store = new Array();
     
@@ -93,12 +77,12 @@ function CertificateStore(){
     };
     
     this.addCertificateEntry = function(certificateEntry) {
-        nameStr = certificateEntry.name.getName();
+        nameStr = certificateEntry.name.to_uri();
         if (! (this.findType(nameStr) == "ID-CERT" ||
                this.findType(nameStr) == "CAP-CERT")) {
             return;
         }
-        var result = this.getCertificateByName(certificateEntry.name.getName());
+        var result = this.getCertificateByName(certificateEntry.name.to_uri());
         if (result == null)
             this.store.push(certificateEntry);
         else
@@ -108,7 +92,7 @@ function CertificateStore(){
     this.getCertificateByName = function(/*str*/name){
         var result = null;
         for (var i = 0; i < this.store.length; i++) {
-            if (this.store[i].name.getName() == name) {
+            if (this.store[i].name.to_uri() == name) {
                 result = this.store[i];
                 break;
             }
@@ -153,33 +137,56 @@ function IdentityVerify() {
       console.log("fetch  "+name);
         content  = this.certificateStore.getCertificateByName(name);
         if (content != null){
-//            console.log(content.name.getName());
+//            console.log(content.name.to_uri());
             this.receive(content);
         }
         else {
  //           console.log("there");
-            ndn.expressInterest(new Name(name), new AsyncGetClosure());
+            var n = new Name(name);
+            var template = new Interest();
+            template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;
+            template.interestLifetime = 1000;
+            ndn.expressInterest(n, template, onData, onTimeout);
+            console.log('Interest expressed.');
+//            ndn.expressInterest(new Name(name), new AsyncGetClosure());
         }
     };
     
     this.output = function(id) {
         for (var i = 0; i < this.chain.length; i++) {
-            document.getElementById(id).innerHTML += "<p>Name string: " + this.chain[i].name.getName()+ "</p>";
-            document.getElementById(id).innerHTML += "<p>Signer string: " + this.chain[i].signedInfo.locator.keyName.contentName.getName()+ "</p>";
+            document.getElementById(id).innerHTML += "<p>Name string: " + this.chain[i].name.to_uri()+ "</p>";
+            document.getElementById(id).innerHTML += "<p>Signer string: " + this.chain[i].signedInfo.locator.keyName.name.to_uri()+ "</p>";
         }
     };
     
+    this.verifySigning = function(content, key) {
+        return content.verify(key);
+    }
+    
     this.receive = function(content) {
 //        console.log(content);
-        nameStr = escape(content.name.getName());
-        keyName = content.signedInfo.locator.keyName.contentName.getName();
+        nameStr = escape(content.name.to_uri());
+        keyName = content.signedInfo.locator.keyName.name.to_uri();
         console.log("name: "+nameStr);
         console.log("keyname: "+keyName);
         issuerName = new Name(nameStr);
+        
+        if (this.chain.length >= 1) {
+            chainLast = this.chain[this.chain.length - 1];
+            var key = new Key();
+            key.publicKeyPem = DataUtils.toString(chainLast.content);
+            key.publicToDER();
+            if (!chainLast.verify(key)) {
+                console.log("signing error");
+                return false;
+            }
+//            console.log("verifiy "+chainLast.verify(key));
+        }
+        
         this.chain.push(content);
         this.certificateStore.addCertificateEntry(content);
         
-        if (issuerName.equalsName(this.trusted)){
+        if (issuerName.equals(this.trusted)){
             this.findFlag = true;
             this.output('result');
             return true;
@@ -210,53 +217,5 @@ var onTimeout = function (interest) {
     console.log('Interest name: ' + interest.name.to_uri());
     ndn.close();
 };
-
-
-var ndn = new NDN();
-
-/*
-ndn.onopen = function () {
-    
-    var n = new Name('/ndn/keys');
-    var template = new Interest();
-    template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;  // bypass cache in ccnd
-    template.interestLifetime = 1000;
-    ndn.expressInterest(n, template, onData, onTimeout);
-    console.log('Interest expressed.');
-    
-};*/
-
-/*
-var AsyncGetClosure = function AsyncGetClosure() {
-    // Inherit from Closure.
-    Closure.call(this);
-};
-
-AsyncGetClosure.prototype.upcall = function(kind, upcallInfo) {
-        if (kind == Closure.UPCALL_FINAL) {
-        // Do nothing.
-        } else if (kind == Closure.UPCALL_CONTENT || kind == Closure.UPCALL_CONTENT_UNVERIFIED) {
-            var content = upcallInfo.contentObject;
-            var instance = IdentityVerifySingleton.getInstance();
-            instance.receive(content);
-        }
-        else if (kind == Closure.UPCALL_CONTENT_BAD) {
-        var content = upcallInfo.contentObject;
-        console.log("Closure.upcall: content signature verification fail.");
-        console.log("Host: " + ndn.host + ":" + ndn.port);
-        if (content.signature.signature)
-            console.log("Signature: " + DataUtils.toHex(content.signature.signature).toLowerCase());
-        if (content.signature.Witness)
-            console.log("Witness: " + DataUtils.toHex(content.signature.Witness).toLowerCase());
-        }
-        else if (kind == Closure.UPCALL_INTEREST_TIMED_OUT) {
-        console.log("Closure.upcall called with interest time out. Re-expressing the interest.");
-        console.log("Host: " + ndn.host + ":" + ndn.port);
-        return Closure.RESULT_REEXPRESS;
-    }
-    return Closure.RESULT_OK;
-};
-
-*/
 
 

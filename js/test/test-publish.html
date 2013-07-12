@@ -11,8 +11,8 @@ function testPublish () {
     var onInterest = function (inst) {
         console.log('Interest received in callback.');
         console.log(inst.name.to_uri());
-        
-        var nameStr = inst.name.getName();
+        var content = ndn.default_key.publicKeyPem;
+        var nameStr = inst.name.to_uri();
         if (nameStr == "/aa/bb/1.txt")
         {
             var name = new Name("/aa/bb/ID-CERT");
@@ -25,16 +25,16 @@ function testPublish () {
             if (nameStr == "/aa/bb/ID-CERT" || nameStr == "/aa/ID-CERT"){
                 var name = new Name("/aa/ID-CERT");
                 var keyname = new KeyName(name);
-                content = globalKeyManager.publicKey;
+                content = ndn.default_key.publicKeyPem;
             }
         }
-        var keyPara = {KeyName: keyname};
-        var si = new SignedInfo();
-        var mykey = ndn.getDefaultKey();
-        si.setFields(keyname,keyPara);
-        var co = new ContentObject(inst.name, ('NDN.JS needs refactoring. ' + inst.name.to_uri()),si);
+        var keyPara = {keyName: keyname};
+//        var si = new SignedInfo();
+//        var mykey = ndn.getDefaultKey();
+//        si.setFields(keyname,keyPara);
+        var co = new ContentObject(inst.name, content);
         
-        co.sign(mykey);
+        co.sign(mykey,keyPara);
 //        console.log(co.content.);
         try {
             ndn.send(co);
@@ -43,7 +43,7 @@ function testPublish () {
         }
     };
 
-    var ndn = new NDN();
+    var ndn = new NDN({host:"127.0.0.1"});
     var mykey = ndn.getDefaultKey();
 
     ndn.onopen = function () {

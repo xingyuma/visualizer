@@ -1,0 +1,91 @@
+<?xml version = "1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+<!--
+	See COPYING for copyright and distribution information.
+-->/Users/xma/Desktop/ndn-js/tests/test-publish-async.html
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<meta charset="UTF-8">
+
+
+<head>
+	<title>NDN Put via WebSocket</title>
+
+	<script type="text/javascript" src="../build/ndn.js"></script>
+
+	<script type="text/javascript">
+		var ndn = new NDN({host:"127.0.0.1"});
+        ndn.connect();
+        var mykey = ndn.getDefaultKey();
+        
+        var onInterest = function (inst) {
+            console.log('Interest received in callback.');
+            console.log(inst.name.to_uri());
+            
+            var nameStr = inst.name.getName();
+            if (nameStr == "/aa/bb/1.txt")
+            {
+                var name = new Name("/aa/bb/ID-CERT");
+                //                console.log(name);
+                //               console.log(typeof name);
+                var keyname = new KeyName(name);
+            }
+            else
+            {
+                if (nameStr == "/aa/bb/ID-CERT" || nameStr == "/aa/ID-CERT"){
+                    var name = new Name("/aa/ID-CERT");
+                    var keyname = new KeyName(name);
+                    content = globalKeyManager.publicKey;
+                }
+            }
+            var keyPara = {KeyName: keyname};
+            var si = new SignedInfo();
+            var mykey = ndn.getDefaultKey();
+            si.setFields(keyname,keyPara);
+            var co = new ContentObject(inst.name, ('NDN.JS needs refactoring. ' + inst.name.to_uri()),si);
+            
+            co.sign(mykey);
+            //        console.log(co.content.);
+            try {
+                ndn.send(co);
+            } catch (e) {
+                console.log(e.toString());
+            }
+        };
+        
+		function run1() {
+            var n1 = new Name('/aa/bb/1.txt');
+            ndn.registerPrefix(n1, onInterest);
+            var n2 = new Name('/aa/bb/ID-CERT');
+            ndn.registerPrefix(n2, onInterest);
+            var n3 = new Name('/aa/ID-CERT');
+            ndn.registerPrefix(n3, onInterest);
+            console.log('Prefix registered.');
+        }
+
+		</script>
+
+</head>
+<body >
+	<form>
+	<div>
+		<p>Please Enter a Content Name:</p>
+
+		<input id="contentname" type="text" name="CONTENTNAME" value="/wentao.shang/regtest001" />
+
+                <p>Please Enter the Content:</p>
+
+		<textarea id="content" cols="40" rows="5" name="CONTENT" >This works!</textarea>
+
+		<br />
+		</div>
+	</form>
+	<div>
+		<button id="testBtn" onclick="run1()">Publish Content 1</button>
+
+	</div>
+
+	<p id="result"></p>
+
+</body>
+</html>

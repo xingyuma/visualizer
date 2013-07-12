@@ -12,7 +12,12 @@ var Key = function Key () {
 };
 
 Key.prototype.publicToDER = function () {
-    return this.publicKeyDer;  // Buffer
+    var lines = this.publicKeyPem.split('\n');
+    pubKey = "";
+    for (var i = 1; i < lines.length - 1; i++)
+        pubKey += lines[i];
+    return DataUtils.toNumbersFromBase64(pubKey);
+//    return this.publicKeyDer;  // Buffer
 };
 
 Key.prototype.privateToDER = function () {
