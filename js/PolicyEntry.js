@@ -27,6 +27,8 @@ PolicyEntry.prototype.checkMatching = function(name,keyLocator){
     var locatorObject = new Name(keyLocator);
     prefixObj = new Name(this.prefix);
     authorityObj = new Name(this.authority);
+    console.log(keyLocator);
+    console.log(this.authority);
     if (prefixObj.matches(nameObject) == true  && locatorObject.equals(authorityObj)){
 		return true;
 	}
@@ -57,6 +59,7 @@ function Policy() {
     
     this.verify = function(name, keyLocator){
         for (var i = 0; i < this.PolicyStore.length; i++) {
+//            console.log(this.PolicyStore[i].prefix+"   "+this.PolicyStore[i].authority);
             if (this.PolicyStore[i].checkMatching(name,keyLocator))
                 return true;
         }
@@ -127,6 +130,7 @@ function IdentityVerify() {
     this.findFlag = false;
     this.policy = null;
     
+    
     this.obtainChain = function(name, policy){
         this.chain = [];
         this.policy = policy;
@@ -180,7 +184,6 @@ function IdentityVerify() {
                 console.log("signing error");
                 return false;
             }
-//            console.log("verifiy "+chainLast.verify(key));
         }
         
         this.chain.push(content);
@@ -201,6 +204,158 @@ function IdentityVerify() {
     };
 };
 
+var CapabilityVerifySingleton= (function () {
+    var instance;
+    function createInstance() {
+        var object = new CapabilityVerify();
+        return object;
+    }
+    return {
+        getInstance: function () {
+            if (!instance) {
+                    instance = createInstance();
+            }
+                              
+            return instance;
+        }
+    };
+})();
+
+function CapabilityVerify() {
+    
+    this.trusted = new Name("/aa/ID-CERT");
+    this.chain = new Array();
+    this.certificateStore = new CertificateStore();
+    this.findFlag = false;
+    this.policy = null;
+    this.oriName = null;
+    
+    var ndn = new NDN({host:"127.0.0.1"});
+    console.log("1");
+    ndn.connect();
+    console.log("2");
+    ndn.onopen = function (name) {
+        console.log("3");
+        console.log(ndn.ready_status);
+        var n = new Name(name);
+        var template = new Interest();
+        template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;  // bypass cache in ccnd
+        template.interestLifetime = 1000;
+        ndn.expressInterest(n, template, onData, onTimeout);
+        console.log('Interest expressed.');
+    };
+    
+    var onData = function (interest, content) {
+        var instance = CapabilityVerifySingleton.getInstance();
+        instance.receive(content);
+    };
+    
+    var onTimeout = function (interest) {
+        console.log("Interest time out.");
+        console.log('Interest name: ' + interest.name.to_uri());
+        //    ndn.close();
+    };
+ 
+    this.obtainChain = function(name, policy){
+        this.chain = [];
+        this.policy = policy;
+        this.oriName = name;
+        this.fetch(name);
+    };
+    
+    this.fetch = function(/*str*/name) {
+        console.log("fetch  "+name);
+        content  = this.certificateStore.getCertificateByName(name);
+        if (content != null){
+            this.receive(content);
+        }
+        else {
+/*            var n = new Name(name);
+            var template = new Interest();
+            template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;
+            template.interestLifetime = 1000;
+            ndn.expressInterest(n, template, onData, onTimeout);
+            console.log('Interest expressed.');
+ */          ndn.onopen(name);
+        }
+    };
+    
+    this.output = function(id) {
+        for (var i = 0; i < this.chain.length; i++) {
+            document.getElementById(id).innerHTML += "<p>Name string: " + this.chain[i].name.to_uri()+ "</p>";
+            document.getElementById(id).innerHTML += "<p>Signer string: " + this.chain[i].signedInfo.locator.keyName.name.to_uri()+ "</p>";
+        }
+    };
+    
+    this.getNameSpace = function(/*str*/_name){
+        ret = new Name(_name);
+        if (_name.match("CAP-CERT") != null) {
+            var array = _name.split('CAP-CERT');
+            tmp = new Name(array[1]);
+            return tmp.getPrefix(tmp.size() -1);
+        }
+        if (_name.match("ID-CERT") != null) {
+            var array = _name.split('ID-CERT');
+            tmp = new Name(array[0]);
+            return tmp;
+        }
+        return ret;
+    };
+  
+    this.checkDelegation = function(nameStr,keyName) {
+       if (this.getNameSpace(keyName).isPrefixOf(this.getNameSpace(nameStr))){
+            return true;
+        }
+        return false;
+    };
+
+    this.receive = function(content) {
+        console.log(content);
+        nameStr = escape(content.name.to_uri());
+        console.log("name: "+nameStr);
+        keyName = content.signedInfo.locator.keyName.name.to_uri();
+        console.log("keyname: "+keyName);
+        issuerName = new Name(nameStr);
+        
+        this.chain.push(content);
+        this.certificateStore.addCertificateEntry(content);
+        
+        if (!this.checkDelegation(nameStr,keyName)) {
+            console.log("delegation error");
+            return false;
+        }
+        
+        if (this.chain.length >= 1) {
+            chainLast = this.chain[this.chain.length - 1];
+            var key = new Key();
+            key.publicKeyPem = DataUtils.toString(chainLast.content);
+            key.publicToDER();
+//            console.log("signing  "+chainLast.verify(key));
+            if (!chainLast.verify(key)) {
+                console.log("signing error");
+                return false;
+            }
+        }
+        
+        if (content.name.equals(content.signedInfo.locator.keyName.name)) {
+            if (this.policy.verify(this.oriName, nameStr)){
+                this.findFlag = true;
+                this.output('result');
+                return true;
+            }
+        }
+        else{
+            this.fetch(keyName);
+        }        
+    };
+    
+
+    
+};
+
+
+/*
+
 
 var ndn = new NDN({host:"127.0.0.1"});
 ndn.connect();
@@ -218,4 +373,5 @@ var onTimeout = function (interest) {
     ndn.close();
 };
 
+*/
 

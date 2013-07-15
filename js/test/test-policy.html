@@ -14,13 +14,13 @@
 	<script type="text/javascript">
         var policy = new Policy();
 		function add(){
-            var instance1 = IdentityVerifySingleton.getInstance();
+            var instance1 = CapabilityVerifySingleton.getInstance();
 //            console.log(document.getElementById('contentName').value);
-            var _policyEntry = new PolicyEntry("/aa/bb/1.txt:/aa/bb/ID-CERT");
+            var _policyEntry = new PolicyEntry("/ndn/ucla.edu/alice/:/ndn/ucla.edu/alice/ID-CERT/");
             policy.addPolicyEntry(_policyEntry);
-            var _policyEntry2 = new PolicyEntry("/aa/bb/ID-CERT:/aa/ID-CERT");
-            policy.addPolicyEntry(_policyEntry2);
-            
+//            var _policyEntry2 = new PolicyEntry("/aa/bb/ID-CERT:/aa/ID-CERT");
+//            policy.addPolicyEntry(_policyEntry2);
+//            instance1.init();
             instance1.obtainChain(document.getElementById('contentName').value,policy);
 //            alert(policy.verify("/a/bb/c/d.txt","/a/b/ID-CERT"));
 //            var id = new IdentityVerify("/aa/bb/","/aa/",policy);
@@ -69,7 +69,7 @@
 			3OK+u3ivTSj3zwjtpudY5Xo=
 			-----END CERTIFICATE-----"></input>
 
-		Please Enter a Text to sign:<br /><input id="contentName" type="text" name="CONTENTNAME" value="/aa/bb/1.txt" /> <br />
+		Please Enter a Text to sign:<br /><input id="contentName" type="text" name="CONTENTNAME" value="/ndn/ucla.edu/alice/mHealth/20130625/D-KEY" /> <br />
 	
 	</form>
 	<button onclick="add()">Add Policy</button>
