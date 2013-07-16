@@ -130,12 +130,43 @@ function IdentityVerify() {
     this.findFlag = false;
     this.policy = null;
     
+    this.oriName;
+    //    this.expressName = null;
     
+    var ndn = new NDN({host:"127.0.0.1"});
+
+    ndn.connect();
+
+    ndn.onopen = function () {
+        console.log("onopen called");
+        var instance = IdentityVerifySingleton.getInstance();
+        instance.fetch(instance.oriName);
+    };
+    
+    var onData = function (interest, content) {
+        var instance = IdentityVerifySingleton.getInstance();
+        instance.receive(content);
+    };
+    
+    var onTimeout = function (interest) {
+        console.log("Interest time out.");
+        console.log('Interest name: ' + interest.name.to_uri());
+        //    ndn.close();
+    };
+    
+    this.init = function(name,policy){
+        this.chain = [];
+        this.oriName = name;
+        this.policy = policy;
+    }
+
+/*
     this.obtainChain = function(name, policy){
         this.chain = [];
         this.policy = policy;
         this.fetch(name);
     };
+  */
     
     this.fetch = function(/*str*/name) {
       console.log("fetch  "+name);
@@ -228,21 +259,18 @@ function CapabilityVerify() {
     this.certificateStore = new CertificateStore();
     this.findFlag = false;
     this.policy = null;
-    this.oriName = null;
+    this.oriName;
+//    this.expressName = null;
     
     var ndn = new NDN({host:"127.0.0.1"});
-    console.log("1");
+//    console.log("1");
     ndn.connect();
-    console.log("2");
-    ndn.onopen = function (name) {
-        console.log("3");
-        console.log(ndn.ready_status);
-        var n = new Name(name);
-        var template = new Interest();
-        template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;  // bypass cache in ccnd
-        template.interestLifetime = 1000;
-        ndn.expressInterest(n, template, onData, onTimeout);
-        console.log('Interest expressed.');
+//    console.log("2");
+    ndn.onopen = function () {
+        console.log("onopen called");
+//        console.log(this.oriName);
+        var instance = CapabilityVerifySingleton.getInstance();
+        instance.fetch(instance.oriName);
     };
     
     var onData = function (interest, content) {
@@ -256,11 +284,12 @@ function CapabilityVerify() {
         //    ndn.close();
     };
  
-    this.obtainChain = function(name, policy){
+    this.init = function(name,policy){
         this.chain = [];
         this.policy = policy;
         this.oriName = name;
-        this.fetch(name);
+        console.log("init");
+        console.log(name+"   "+this.oriName);
     };
     
     this.fetch = function(/*str*/name) {
@@ -270,13 +299,12 @@ function CapabilityVerify() {
             this.receive(content);
         }
         else {
-/*            var n = new Name(name);
+            var n = new Name(name);
             var template = new Interest();
             template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;
             template.interestLifetime = 1000;
             ndn.expressInterest(n, template, onData, onTimeout);
             console.log('Interest expressed.');
- */          ndn.onopen(name);
         }
     };
     
@@ -335,6 +363,9 @@ function CapabilityVerify() {
                 console.log("signing error");
                 return false;
             }
+            else {
+                console.log("signing correct");
+            }
         }
         
         if (content.name.equals(content.signedInfo.locator.keyName.name)) {
@@ -346,32 +377,141 @@ function CapabilityVerify() {
         }
         else{
             this.fetch(keyName);
+//            this.expressName = keyName;
         }        
     };
+};
+
+
+var RoleEntry = function RoleEntry(_item){
+	this.name = null;
+	this.def = null;
+	if (typeof _item == 'string') {
+			var array = _item.split(":-");
+			this.name = (array[0]);
+			this.def = (array[1]);
+	}
+};
+
+RoleEntry.prototype.getFirstRole = function(){
+    var array = this.def.split(".");
+    return array[1];
+};
+
+RoleEntry.prototype.getLastRole = function(){
+    var array = this.def.split(".");
+    return array[array.length - 1];
+};
+
+RoleEntry.prototype.getRoleHeader = function(){
+    var array = this.def.split(".");
+    return array[0];
+};
+
+function RoleStore(){
+    this.store = new Array();
     
-
+    this.addRoleEntry = function(/*str*/_roleString) {
+        var _entry = new RoleEntry(_roleString);
+        if (!this.checkDuplication(_entry)){
+            this.store.push(_entry);
+        }
+    };
     
+    this.checkDuplication = function(_entry){
+        for (var i = 0; i < this.store.length; i++) {
+            if (this.store[i].name == _entry.name &&
+                this.store[i].def == _entry.def) {
+                return true;
+            }
+        }
+        return false;
+    };
+    
+    this.getDefinitionByRoleName = function(/*str*/_name){
+        var result = new Array();
+        for (var i = 0; i < this.store.length; i++) {
+            if (this.store[i].name == _name) {
+                result.push(this.store[i]);
+            }
+        }
+        return result;
+    };
 };
 
 
-/*
+var RoleVerifySingleton= (function () {
+    var instance;
+    function createInstance() {
+        var object = new RoleVerify();
+        return object;
+    }
+    return {
+            getInstance: function () {
+                if (!instance) {
+                    instance = createInstance();
+                }
+                                
+            return instance;
+            }
+    };
+})();
 
+function RoleVerify() {
+    
+    this.chain = new Array();
+    this.certificateStore = new CertificateStore();
+    this.roleStore = null;
+    this.findFlag = false;
+    this.policy = null;
+    this.oriName;
 
-var ndn = new NDN({host:"127.0.0.1"});
-ndn.connect();
-
-
-var onData = function (interest, content) {
-//    var content = upcallInfo.contentObject;
-    var instance = IdentityVerifySingleton.getInstance();
-    instance.receive(content);
-};
-
-var onTimeout = function (interest) {
-    console.log("Interest time out.");
-    console.log('Interest name: ' + interest.name.to_uri());
-    ndn.close();
-};
-
-*/
-
+    var ndn = new NDN({host:"127.0.0.1"});
+    ndn.connect();
+    
+    ndn.onopen = function () {
+        console.log("onopen called");
+        var instance = RoleVerifySingleton.getInstance();
+        instance.fetch(instance.oriName);
+    };
+    
+    var onData = function (interest, content) {
+//        var instance = RoleVerifySingleton.getInstance();
+//        instance.receive(content);
+    };
+    
+    var onTimeout = function (interest) {
+        console.log("Interest time out.");
+        console.log('Interest name: ' + interest.name.to_uri());
+    };
+    
+    this.getRole = function() {
+        
+    }
+    
+    this.fetch = function(/*str*/name) {
+        console.log("fetch  "+name);
+        content  = this.certificateStore.getCertificateByName(name);
+        if (content != null){
+            this.receive(content);
+        }
+        else {
+            var n = new Name(name);
+            var template = new Interest();
+            template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;
+            template.interestLifetime = 1000;
+            ndn.expressInterest(n, template, onData, onTimeout);
+            console.log('Interest expressed.');
+        }
+    };
+    
+    this.init = function(name,policy,role){
+        this.chain = [];
+        this.policy = policy;
+        this.oriName = name;
+        this.roleStore = role;
+        console.log("init");
+//        console.log(name+"   "+this.oriName);
+    };
+    
+}

@@ -20,8 +20,9 @@
             policy.addPolicyEntry(_policyEntry);
 //            var _policyEntry2 = new PolicyEntry("/aa/bb/ID-CERT:/aa/ID-CERT");
 //            policy.addPolicyEntry(_policyEntry2);
-//            instance1.init();
-            instance1.obtainChain(document.getElementById('contentName').value,policy);
+            instance1.init(document.getElementById('contentName').value,policy);
+//            instance1.obtainChain(document.getElementById('contentName').value,policy);
+            
 //            alert(policy.verify("/a/bb/c/d.txt","/a/b/ID-CERT"));
 //            var id = new IdentityVerify("/aa/bb/","/aa/",policy);
  //           id.fetch("/aa/bb/");
