@@ -465,6 +465,7 @@ function RoleVerify() {
     this.findFlag = false;
     this.policy = null;
     this.oriName;
+    this.firstFlag= true;
 
     var ndn = new NDN({host:"127.0.0.1"});
     ndn.connect();
@@ -472,18 +473,51 @@ function RoleVerify() {
     ndn.onopen = function () {
         console.log("onopen called");
         var instance = RoleVerifySingleton.getInstance();
+        this.firstFlag = true;
         instance.fetch(instance.oriName);
     };
     
     var onData = function (interest, content) {
-//        var instance = RoleVerifySingleton.getInstance();
-//        instance.receive(content);
+        var instance = RoleVerifySingleton.getInstance();
+        instance.receive(content);
     };
     
     var onTimeout = function (interest) {
         console.log("Interest time out.");
         console.log('Interest name: ' + interest.name.to_uri());
     };
+    
+    this.getIssuer = function(/*str*/_item) {
+        var array = this.def.split("/ISSUER");
+        return array[1];
+    }
+    
+    this.getRole = function(/*str*/_item){
+        var array = this.def.split("/ROLE-CERT");
+        var array2 = array[1].split("/ISSUER");
+        return array2[0];
+    }
+    
+    this.getNameSpace = function(/*str*/_item) {
+        var array = this.def.split("/ROLE-CERT");
+        return array[0];
+    }
+    
+    this.receive = function(content){
+        console.log(this.firstFlag);
+        if (this.firstFlag) {
+            nameStr = escape(content.name.to_uri());
+            console.log(content);
+            console.log(nameStr);
+            keyName = content.signedInfo.locator.keyName.name.to_uri();
+            console.log("name: "+nameStr);
+            console.log("keyname: "+keyName);
+            console.log(this.getNameSpace(keyName));
+            console.log(this.getIssuer(keyName));
+            console.log(this.getRole(keyName));
+
+        }
+    }
     
     this.getRole = function() {
         
