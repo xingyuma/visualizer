@@ -1,0 +1,94 @@
+<?xml version = "1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+<!--
+ See COPYING for copyright and distribution information.
+ -->/Users/xma/Desktop/ndn-js/tests/test-publish-async.html
+<html xmlns = "http://www.w3.org/1999/xhtml">
+    <meta charset="UTF-8">
+        
+        
+        <head>
+            <title>NDN Put via WebSocket</title>
+            
+            <script type="text/javascript" src="../build/ndn.js"></script>
+            
+            <script type="text/javascript">
+                var ndn = new NDN({host:"127.0.0.1"});
+                ndn.connect();
+                var mykey = ndn.getDefaultKey();
+                
+                var onInterest = function (inst) {
+                    console.log('Interest received in callback.');
+                    console.log(inst.name.to_uri());
+                    var content = ndn.default_key.publicKeyPem;
+                    var nameStr = inst.name.to_uri();
+                    //            console.log(nameStr);
+                    if (nameStr == "/ndn/ucla/BoelterHall/utility/log")
+                    {
+                        var name = new Name("/ndn/ucla/charlie/ROLE-CERT/Admin/ISSUER/ndn/ucla/cs/");
+                        console.log(name);
+                        //               console.log(typeof name);
+                        var keyname = new KeyName(name);
+                    }
+                    if (nameStr == "/ndn/clinic/nurse/Cathy/CAP-CERT/ndn/ucla.edu/alice/mHealth/20130625/cc-13"){                console.log("here");
+                        var name = new Name("/ndn/clinic/doctor/Bob/CAP-CERT/ndn/ucla.edu/alice/mHealth/cc-34");
+                        var keyname = new KeyName(name);
+                        //content = globalKeyManager.publicKey;
+                    }
+                    if (nameStr == "/ndn/clinic/doctor/Bob/CAP-CERT/ndn/ucla.edu/alice/mHealth/cc-34"){
+                        var name = new Name("/ndn/ucla.edu/alice/ID-CERT/");
+                        var keyname = new KeyName(name);
+                        //content = globalKeyManager.publicKey;
+                    }
+                    if (nameStr == "/ndn/ucla.edu/alice/ID-CERT"){
+                        var name = new Name("/ndn/ucla.edu/alice/ID-CERT/");
+                        var keyname = new KeyName(name);
+                        //content = globalKeyManager.publicKey;
+                    }
+                    
+                    var keyPara = {keyName: keyname};
+                    var co = new ContentObject(inst.name, content);
+                    //            var co = new ContentObject(inst.name, ('NDN.JS needs refactoring. ' + inst.name.to_uri()));
+                    
+                    co.sign(mykey,keyPara);
+                    //        console.log(co.content.);
+                    try {
+                        ndn.send(co);
+                    } catch (e) {
+                        console.log(e.toString());
+                    }
+                };
+                
+                function run1() {
+                    var n1 = new Name('/ndn/ucla/BoelterHall/utility/log/');
+                    ndn.registerPrefix(n1, onInterest);
+                    console.log('Prefix registered.');
+                }
+                
+                </script>
+            
+        </head>
+        <body >
+            <form>
+                <div>
+                    <p>Please Enter a Content Name:</p>
+                    
+                    <input id="contentname" type="text" name="CONTENTNAME" value="/wentao.shang/regtest001" />
+                    
+                    <p>Please Enter the Content:</p>
+                    
+                    <textarea id="content" cols="40" rows="5" name="CONTENT" >This works!</textarea>
+                    
+                    <br />
+                </div>
+            </form>
+            <div>
+                <button id="testBtn" onclick="run1()">Publish Content 1</button>
+                
+            </div>
+            
+            <p id="result"></p>
+            
+        </body>
+</html>

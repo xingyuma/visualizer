@@ -3,13 +3,11 @@ var PolicyEntry = function PolicyEntry(_item){
 	this.prefix = null;
 	this.authority = null;
 	if (typeof _item == 'string') {
-		if (this.findType(_item) == "ID-CERT") {
+//		if (this.findType(_item) == "ID-CERT") {
 			var array = _item.split(':');
 			this.prefix = (array[0]);
-//            if (this.prefix.charAt(this.prefix.length-1) != "/")
-//                this.prefix = this.prefix.concat("/");
 			this.authority = (array[1]);
-		}	
+//		}
 	}
 };
 
@@ -21,6 +19,14 @@ PolicyEntry.prototype.findType = function(_item){
 		return "CAP-CERT";
 	}
 };
+
+PolicyEntry.prototype.prefixMatching = function(name){
+    var nameObject = new Name(name);
+    prefixObj = new Name(this.prefix);
+    if (prefixObj.matches(nameObject) == true){
+		return true;
+	}    
+}
 
 PolicyEntry.prototype.checkMatching = function(name,keyLocator){
     var nameObject = new Name(name);
@@ -46,11 +52,12 @@ function Policy() {
             result = policyEntry;
     };
     
+    /*exact match*/
     this.getPolicyByPrefix = function(/*prefix for policy*/ prefix){
         var result = null;
         for (var i = 0; i < this.PolicyStore.length; i++) {
             if (this.PolicyStore[i].prefix == prefix) {
-                if (result == null || this.PolicyStore[i].prefix.length > result.length)
+//                if (result == null || this.PolicyStore[i].prefix.length > result.length)
                     result = this.PolicyStore[i];
             }
         }
@@ -65,6 +72,18 @@ function Policy() {
         }
         return false;
     };
+    
+    /*getAuthority is used for role-based*/
+    this.getAuthority = function(_name) {
+        var result = new Array();
+        for (var i = 0; i < this.PolicyStore.length; i++) {
+            if (this.PolicyStore[i].prefixMatching(_name)) {
+//                console.log("match  "+this.PolicyStore[i].prefix+"  "+_name);
+                result.push(this.PolicyStore[i]);
+            }
+        }
+        return result;
+    }
 };
 
 function CertificateStore(){
@@ -411,6 +430,14 @@ RoleEntry.prototype.getRoleHeader = function(){
 function RoleStore(){
     this.store = new Array();
     
+    this.addRoleDefCertification = function(_content) {
+        var array = _content.content.split("#");
+        for (var i = 0 ; i < array.length ; i++){
+            _entry = new RoleEntry(array[i]);
+            this.store.addRoleEntry(array[i]);
+        }
+    }
+    
     this.addRoleEntry = function(/*str*/_roleString) {
         var _entry = new RoleEntry(_roleString);
         if (!this.checkDuplication(_entry)){
@@ -487,41 +514,57 @@ function RoleVerify() {
         console.log('Interest name: ' + interest.name.to_uri());
     };
     
-    this.getIssuer = function(/*str*/_item) {
+    this.getRoleOwner = function(/*str*/_item) {
         var array = this.def.split("/ISSUER");
         return array[1];
-    }
+    };
     
-    this.getRole = function(/*str*/_item){
+    this.getRoleName = function(/*str*/_item){
         var array = this.def.split("/ROLE-CERT");
         var array2 = array[1].split("/ISSUER");
         return array2[0];
-    }
+    };
     
     this.getNameSpace = function(/*str*/_item) {
         var array = this.def.split("/ROLE-CERT");
         return array[0];
+    };
+    
+    this.fetchRoleDefCertification = function(_name) {
+        if (this.roleStore.getDefinitionByRoleName(_name) != null) {
+        
+        }
+        else{
+            this.fetch();
+        }
     }
     
     this.receive = function(content){
         console.log(this.firstFlag);
+        
         if (this.firstFlag) {
             nameStr = escape(content.name.to_uri());
             console.log(content);
             console.log(nameStr);
             keyName = content.signedInfo.locator.keyName.name.to_uri();
-            console.log("name: "+nameStr);
+            
+            var authority = this.policy.getAuthority(nameStr);
+            console.log("auth:   "+authority[0].prefix+"  "+authority[0].authority);
+/*            console.log("name: "+nameStr);
             console.log("keyname: "+keyName);
             console.log(this.getNameSpace(keyName));
-            console.log(this.getIssuer(keyName));
-            console.log(this.getRole(keyName));
-
+            console.log(this.getRoleOwner(keyName));
+            console.log(this.getRoleName(keyName));
+ */
+            
+        }        
+        if (nameStr.match("/ROLE-DEF") != null) {
+            this.processRoleDef(content);
         }
-    }
-    
-    this.getRole = function() {
-        
-    }
+        if (nameStr.match("/ROLE-CERT") != null) {
+            this.certificateStore.addCertificateEntry(_content);
+        }        
+    };
     
     this.fetch = function(/*str*/name) {
         console.log("fetch  "+name);

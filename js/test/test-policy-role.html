@@ -1,0 +1,89 @@
+<?xml version = "1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+<!-- 
+	See COPYING for copyright and distribution information.
+-->
+<html xmlns = "http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>NDN Signature - String</title>
+
+    <script type="text/javascript" src="../build/ndn.js"></script>
+    <script type="text/javascript" src="../PolicyEntry.js"></script>		
+	<script type="text/javascript">
+        var policy = new Policy();
+        var roleStore = new RoleStore();
+		function add(){
+            roleStore.addRoleEntry(".QualOfficer:-\"/ndn/ucla/BoelterHall/\".QualOrg.Manager");
+            roleStore.addRoleEntry(".QualOfficer:-\"/ndn/ucla/BoelterHall/\".QualOrg.Admin");
+            console.log(roleStore.getDefinitionByRoleName(".QualOfficer"));
+            var instance1 = RoleVerifySingleton.getInstance();
+//            console.log(document.getElementById('contentName').value);
+            var _policyEntry = new PolicyEntry("/ndn/ucla/BoelterHall/utility/log/:.QualOfficer");
+            policy.addPolicyEntry(_policyEntry);
+            instance1.init(document.getElementById('contentName').value,policy,roleStore);
+//            instance1.obtainChain(document.getElementById('contentName').value,policy);
+            
+//            alert(policy.verify("/a/bb/c/d.txt","/a/b/ID-CERT"));
+//            var id = new IdentityVerify("/aa/bb/","/aa/",policy);
+ //           id.fetch("/aa/bb/");
+		}
+		function show(){
+    //        for (var i = 0; i < policy.PolicyStore.length; i++) {
+      //         document.getElementById('result').innerHTML = policy.PolicyStore[i].prefix;
+        //    }
+		}
+
+	</script>
+	
+
+</head>
+<body >
+	<form>
+		
+		<input id="privateKey" type="hidden" value="-----BEGIN RSA PRIVATE KEY-----
+			MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
+			Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
+			NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
+			AoGAA9/q3Zk6ib2GFRpKDLO/O2KMnAfR+b4XJ6zMGeoZ7Lbpi3MW0Nawk9ckVaX0
+			ZVGqxbSIX5Cvp/yjHHpww+QbUFrw/gCjLiiYjM9E8C3uAF5AKJ0r4GBPl4u8K4bp
+			bXeSxSB60/wPQFiQAJVcA5xhZVzqNuF3EjuKdHsw+dk+dPECQQDubX/lVGFgD/xY
+			uchz56Yc7VHX+58BUkNSewSzwJRbcueqknXRWwj97SXqpnYfKqZq78dnEF10SWsr
+			/NMKi+7XAkEA4PVqDv/OZAbWr4syXZNv/Mpl4r5suzYMMUD9U8B2JIRnrhmGZPzL
+			x23N9J4hEJ+Xh8tSKVc80jOkrvGlSv+BxwJAaTOtjA3YTV+gU7Hdza53sCnSw/8F
+			YLrgc6NOJtYhX9xqdevbyn1lkU0zPr8mPYg/F84m6MXixm2iuSz8HZoyzwJARi2p
+			aYZ5/5B2lwroqnKdZBJMGKFpUDn7Mb5hiSgocxnvMkv6NjT66Xsi3iYakJII9q8C
+			Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
+			dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
+			-----END RSA PRIVATE KEY-----"></input>
+		
+		
+		<input id="certificate" type="hidden" value="-----BEGIN CERTIFICATE-----
+			MIIBvTCCASYCCQD55fNzc0WF7TANBgkqhkiG9w0BAQUFADAjMQswCQYDVQQGEwJK
+			UDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwHhcNMTAwNTI4MDIwODUxWhcNMjAwNTI1
+			MDIwODUxWjAjMQswCQYDVQQGEwJKUDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwgZ8w
+			DQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANGEYXtfgDRlWUSDn3haY4NVVQiKI9Cz
+			Thoua9+DxJuiseyzmBBe7Roh1RPqdvmtOHmEPbJ+kXZYhbozzPRbFGHCJyBfCLzQ
+			fVos9/qUQ88u83b0SFA2MGmQWQAlRtLy66EkR4rDRwTj2DzR4EEXgEKpIvo8VBs/
+			3+sHLF3ESgAhAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAEZ6mXFFq3AzfaqWHmCy1
+			ARjlauYAa8ZmUFnLm0emg9dkVBJ63aEqARhtok6bDQDzSJxiLpCEF6G4b/Nv/M/M
+			LyhP+OoOTmETMegAVQMq71choVJyOFE5BtQa6M/lCHEOya5QUfoRF2HF9EjRF44K
+			3OK+u3ivTSj3zwjtpudY5Xo=
+			-----END CERTIFICATE-----"></input>
+
+		Please Enter a Text to sign:<br /><input id="contentName" type="text" name="CONTENTNAME" value="/ndn/ucla/BoelterHall/utility/log/" /> <br />
+	
+	</form>
+	<button onclick="add()">Add Policy</button>
+	<button onclick="show()">Show policies</button>
+	
+	
+
+		<p id="result"></p>
+
+		
+	
+</body>
+
+</html>
