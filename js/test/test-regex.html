@@ -13,14 +13,30 @@
     <script type="text/javascript" src="../regex.js"></script>
 	<script type="text/javascript">
 		function add(){
-            str = "abbbc";
-            re = "ab+c";
-            _name = new Name("/aa/bbc/cc");
-            console.log(re.match(str));
-            console.log(str.match(re));
+            str = "ndn-key33";
+            re = "ndn-key";
+            _name = new Name("/ndn-3/ndn-3/ndn-3");
+            var backRefManager= new BackRefManager();
+//            console.log(re.match(str));
+//            console.log(str.match(re));
             
-            com = new Component("b+cc",null,true);
+/*            com = new Component("b+cc",null,true);
             console.log(com.match(_name,1,2));
+  */
+//            comSet = new ComponentSetMatcher("[<ndn-key><ndn-cert>]",null,true);
+//            console.log(comSet.compile());
+//            console.log(comSet.match(_name,1,1));
+            repeat = new RepeatMatcher("<ndn-3>{1,2}",backRefManager,7);
+            repeat.compile();
+            console.log(repeat);
+            console.log(_name);
+            console.log(repeat.match(_name,0,3));
+//            patternList = new PatternListMatcher("<ndn>(<ucla>)", backRefManager);
+//            patternList.compile();
+//            console.log(patternList);
+//            console.log(patternList);
+//            console.log(patternList.match(_name,0,2));
+
 		}
 		function show(){
     //        for (var i = 0; i < policy.PolicyStore.length; i++) {
