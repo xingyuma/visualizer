@@ -15,7 +15,7 @@
 		function add(){
             str = "ndn-key33";
             re = "ndn-key";
-            _name = new Name("/ndn-3/ndn-3/ndn-3");
+            _name = new Name("/ndn/tt/kk/app/dd/pp/ok");
             var backRefManager= new BackRefManager();
 //            console.log(re.match(str));
 //            console.log(str.match(re));
@@ -23,19 +23,25 @@
 /*            com = new Component("b+cc",null,true);
             console.log(com.match(_name,1,2));
   */
-//            comSet = new ComponentSetMatcher("[<ndn-key><ndn-cert>]",null,true);
+//            comSet = new ComponentSetMatcher("[<ndn><ucla>]",null,true);
 //            console.log(comSet.compile());
 //            console.log(comSet.match(_name,1,1));
-            repeat = new RepeatMatcher("<ndn-3>{1,2}",backRefManager,7);
-            repeat.compile();
-            console.log(repeat);
-            console.log(_name);
-            console.log(repeat.match(_name,0,3));
-//            patternList = new PatternListMatcher("<ndn>(<ucla>)", backRefManager);
-//            patternList.compile();
+//            repeat = new RepeatMatcher("<ndn-3>",backRefManager,9);
+//            repeat.compile();
+//            console.log(repeat);
+//            console.log(_name);
+ //           console.log(repeat.match(_name,0,1));
+/*            patternList = new PatternListMatcher("((((<ndn>))([<tt><ID-CERT><kk>]){1,2})+<app>)<dd><pp>?<ok>", backRefManager);
+            patternList.compile();
+            console.log(patternList);
 //            console.log(patternList);
-//            console.log(patternList);
-//            console.log(patternList.match(_name,0,2));
+            console.log(patternList.match(_name,0,7));
+*/
+            topMatcher = new TopMatcher("^((((<ndn>))([<tt><ID-CERT><kk>]){1,2})+<app>)<dd><pp>?<ok>$", backRefManager);
+            topMatcher.compile();
+            console.log(topMatcher);
+            //            console.log(patternList);
+            console.log(topMatcher.match(_name,0,7));
 
 		}
 		function show(){
