@@ -38,7 +38,7 @@
             console.log(patternList.match(_name,0,7));
 */
             
-            topMatcher = new TopMatcher("^((((<^ndn$>))([<^tt\\.ucla$>]){0,1}))$", backRefManager);
+            topMatcher = new TopMatcher("^((((<^ndn$>))([<^tt\\.ucla$>]){1,}))$", backRefManager);
             topMatcher.compile();
             console.log(topMatcher);
             //            console.log(patternList);

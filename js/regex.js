@@ -74,65 +74,6 @@ function RegexMatcher(_expr, _type, _backRefManager){
     }
 };
 
-/*
- RegexMatcher.prototype.match = function(_name, offset, len) {
- //   console.log("len   "+len);
- var cnt = 0;
- for (var i = 0; i < len; i++) {
- if (this.m_matcherList[i].match(_name,offset+i,1)) {
- cnt ++;
- }
- else break;
- }
- console.log(cnt);
- if (cnt == len) {
- this.m_matchResult = new Name();
- for (var i = 0 ; i < len ; i++){
- this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
- }
- return true;
- }
- else
- return false;
- }
- */
-/*
- RegexMatcher.prototype.match = function(_name, offset, len){
- //    console.log(_name.to_uri());
- //    console.log(offset+"  "+len);
- this.m_matchResult = new Name();
- if (this.recursiveMatch(0,_name, offset, len)) {
- for (var i = 0 ; i < len ; i++){
- this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
- }
- return true;
- }else
- return false;
- };
- 
- RegexMatcher.prototype.recursiveMatch = function(mid, _name, offset, len) {
- var tried = 0;
- //    console.log(mid);
- if (mid >= this.m_matcherList.length ){
- if (len != 0)
- return false;
- else
- return true;
- }
- //    console.log(this.m_matcherList);
- var matcher = this.m_matcherList[mid];
- while (tried <= len) {
- if (matcher.match(_name, offset,tried)
- && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
- return true;
- }
- else {
- tried ++;
- }
- }
- return false;
- };
- */
 
 var ComponentSetMatcher = function(_expr, _backRefManager, _include) {
     
@@ -276,43 +217,7 @@ var BackRefMatcher = function(_expr, _backRefManager) {
             return true;
         }
     }
-    /*
-     this.match = function(_name, offset, len){
-     //    console.log(_name.to_uri());
-     //    console.log(offset+"  "+len);
-     this.m_matchResult = new Name();
-     if (this.recursiveMatch(0,_name, offset, len)) {
-     for (var i = 0 ; i < len ; i++){
-     this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
-     }
-     return true;
-     }else
-     return false;
-     };
-     
-     this.recursiveMatch = function(mid, _name, offset, len) {
-     var tried = 0;
-     //    console.log(mid);
-     if (mid >= this.m_matcherList.length ){
-     if (len != 0)
-     return false;
-     else
-     return true;
-     }
-     //    console.log(this.m_matcherList);
-     var matcher = this.m_matcherList[mid];
-     while (tried <= len) {
-     if (matcher.match(_name, offset,tried)
-     && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
-     return true;
-     }
-     else {
-     tried ++;
-     }
-     }
-     return false;
-     };
-     */
+
 };
 
 var RepeatMatcher = function(_expr, _backRefManager, indicator) {
@@ -552,40 +457,6 @@ var PatternListMatcher = function(_expr, _backRefManager) {
         }
     }
     
-    /*    this.match = function(_name, offset, len){
-     this.m_matchResult = new Name();
-     if (this.recursiveMatch(0,_name, offset, len)) {
-     for (var i = 0 ; i < len ; i++){
-     this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
-     }
-     return true;
-     }else
-     return false;
-     };
-     
-     this.recursiveMatch = function(mid, _name, offset, len) {
-     var tried = 0;
-     //    console.log(mid);
-     if (mid >= this.m_matcherList.length ){
-     if (len != 0)
-     return false;
-     else
-     return true;
-     }
-     //    console.log(this.m_matcherList);
-     var matcher = this.m_matcherList[mid];
-     while (tried <= len) {
-     if (matcher.match(_name, offset,tried)
-     && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
-     return true;
-     }
-     else {
-     tried ++;
-     }
-     }
-     return false;
-     };
-     */
 };
 
 var TopMatcher = function(_expr, _backRefManager) {
@@ -610,41 +481,6 @@ var TopMatcher = function(_expr, _backRefManager) {
         this.m_matcherList.push(matcher);
         return true;
     }
-    
-    /*    this.match = function(_name, offset, len){
-     this.m_matchResult = new Name();
-     if (this.recursiveMatch(0,_name, offset, len)) {
-     for (var i = 0 ; i < len ; i++){
-     this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
-     }
-     return true;
-     }else
-     return false;
-     };
-     
-     this.recursiveMatch = function(mid, _name, offset, len) {
-     var tried = 0;
-     //    console.log(mid);
-     if (mid >= this.m_matcherList.length ){
-     if (len != 0)
-     return false;
-     else
-     return true;
-     }
-     //    console.log(this.m_matcherList);
-     var matcher = this.m_matcherList[mid];
-     while (tried <= len) {
-     if (matcher.match(_name, offset,tried)
-     && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
-     return true;
-     }
-     else {
-     tried ++;
-     }
-     }
-     return false;
-     };
-     */
 };
 
 PatternListMatcher.prototype = new RegexMatcher();
