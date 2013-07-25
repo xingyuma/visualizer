@@ -1,4 +1,4 @@
-Component = function(_exp, _backRefManager, _exact){
+var Component = function(_exp, _backRefManager, _exact){
     this.exp = _exp;
     this.backRefManager = _backRefManager;
     this.exact = _exact;
@@ -26,7 +26,7 @@ Component = function(_exp, _backRefManager, _exact){
         }
     }
     
-}
+};
 
 
 function RegexMatcher(_expr, _type, _backRefManager){
@@ -36,7 +36,43 @@ function RegexMatcher(_expr, _type, _backRefManager){
     
     this.m_matcherList = new Array();
     this.m_matchResult = null;
-}
+    
+    this.match = function(_name, offset, len){
+        //    console.log(_name.to_uri());
+        //    console.log(offset+"  "+len);
+        this.m_matchResult = new Name();
+        if (this.recursiveMatch(0,_name, offset, len)) {
+            for (var i = 0 ; i < len ; i++){
+                this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
+            }
+            return true;
+        }else
+            return false;
+    };
+    
+    this.recursiveMatch = function(mid, _name, offset, len) {
+        //    console.log(mid);
+        if (mid >= this.m_matcherList.length ){
+            if (len != 0)
+                return false;
+            else
+                return true;
+        }
+        //    console.log(this.m_matcherList);
+        var tried = len;
+        var matcher = this.m_matcherList[mid];
+        while (tried >= 0) {
+            if (matcher.match(_name, offset,tried)
+                && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
+                return true;
+            }
+            else {
+                tried --;
+            }
+        }
+        return false;
+    }
+};
 
 /*
  RegexMatcher.prototype.match = function(_name, offset, len) {
@@ -61,44 +97,44 @@ function RegexMatcher(_expr, _type, _backRefManager){
  }
  */
 /*
-RegexMatcher.prototype.match = function(_name, offset, len){
-    //    console.log(_name.to_uri());
-    //    console.log(offset+"  "+len);
-    this.m_matchResult = new Name();
-    if (this.recursiveMatch(0,_name, offset, len)) {
-        for (var i = 0 ; i < len ; i++){
-            this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
-        }
-        return true;
-    }else
-        return false;
-};
+ RegexMatcher.prototype.match = function(_name, offset, len){
+ //    console.log(_name.to_uri());
+ //    console.log(offset+"  "+len);
+ this.m_matchResult = new Name();
+ if (this.recursiveMatch(0,_name, offset, len)) {
+ for (var i = 0 ; i < len ; i++){
+ this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
+ }
+ return true;
+ }else
+ return false;
+ };
+ 
+ RegexMatcher.prototype.recursiveMatch = function(mid, _name, offset, len) {
+ var tried = 0;
+ //    console.log(mid);
+ if (mid >= this.m_matcherList.length ){
+ if (len != 0)
+ return false;
+ else
+ return true;
+ }
+ //    console.log(this.m_matcherList);
+ var matcher = this.m_matcherList[mid];
+ while (tried <= len) {
+ if (matcher.match(_name, offset,tried)
+ && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
+ return true;
+ }
+ else {
+ tried ++;
+ }
+ }
+ return false;
+ };
+ */
 
-RegexMatcher.prototype.recursiveMatch = function(mid, _name, offset, len) {
-    var tried = 0;
-    //    console.log(mid);
-    if (mid >= this.m_matcherList.length ){
-        if (len != 0)
-            return false;
-        else
-            return true;
-    }
-    //    console.log(this.m_matcherList);
-    var matcher = this.m_matcherList[mid];
-    while (tried <= len) {
-        if (matcher.match(_name, offset,tried)
-            && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
-            return true;
-        }
-        else {
-            tried ++;
-        }
-    }
-    return false;
-};
-*/
-
-ComponentSetMatcher = function(_expr, _backRefManager, _include) {
+var ComponentSetMatcher = function(_expr, _backRefManager, _include) {
     
     this.m_expr = _expr;
     this.m_backRefManager = _backRefManager;
@@ -179,9 +215,9 @@ ComponentSetMatcher = function(_expr, _backRefManager, _include) {
     
     this.match = function(_name, offset, len){
         
-//        console.log("component set matcher");
-//        console.log(this.m_components);
-//        console.log(this.m_include);
+        //        console.log("component set matcher");
+        //        console.log(this.m_components);
+        //        console.log(this.m_include);
         
         var matched = false;
         if (len != 1) {
@@ -207,7 +243,7 @@ ComponentSetMatcher = function(_expr, _backRefManager, _include) {
     }
 };
 
-BackRefManager = function() {
+var BackRefManager = function() {
     this.m_backRefs = new Array();
     
     this.pushRef = function(_matcher){
@@ -223,12 +259,11 @@ BackRefManager = function() {
 };
 
 
-BackRefMatcher = function(_expr, _backRefManager) {
+var BackRefMatcher = function(_expr, _backRefManager) {
     //    RegexMatcher.call(this);
     this.m_expr = _expr;
     this.m_backRefManager  =_backRefManager;
     this.m_matcherList = new Array();
-    this.matcherList = new Array();
     
     this.compile = function(){
         var last = this.m_expr.length - 1;
@@ -241,45 +276,46 @@ BackRefMatcher = function(_expr, _backRefManager) {
             return true;
         }
     }
-    
-    this.match = function(_name, offset, len){
-        //    console.log(_name.to_uri());
-        //    console.log(offset+"  "+len);
-        this.m_matchResult = new Name();
-        if (this.recursiveMatch(0,_name, offset, len)) {
-            for (var i = 0 ; i < len ; i++){
-                this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
-            }
-            return true;
-        }else
-            return false;
-    };
-    
-    this.recursiveMatch = function(mid, _name, offset, len) {
-        var tried = 0;
-        //    console.log(mid);
-        if (mid >= this.m_matcherList.length ){
-            if (len != 0)
-                return false;
-            else
-                return true;
-        }
-        //    console.log(this.m_matcherList);
-        var matcher = this.m_matcherList[mid];
-        while (tried <= len) {
-            if (matcher.match(_name, offset,tried)
-                && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
-                return true;
-            }
-            else {
-                tried ++;
-            }
-        }
-        return false;
-    };
+    /*
+     this.match = function(_name, offset, len){
+     //    console.log(_name.to_uri());
+     //    console.log(offset+"  "+len);
+     this.m_matchResult = new Name();
+     if (this.recursiveMatch(0,_name, offset, len)) {
+     for (var i = 0 ; i < len ; i++){
+     this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
+     }
+     return true;
+     }else
+     return false;
+     };
+     
+     this.recursiveMatch = function(mid, _name, offset, len) {
+     var tried = 0;
+     //    console.log(mid);
+     if (mid >= this.m_matcherList.length ){
+     if (len != 0)
+     return false;
+     else
+     return true;
+     }
+     //    console.log(this.m_matcherList);
+     var matcher = this.m_matcherList[mid];
+     while (tried <= len) {
+     if (matcher.match(_name, offset,tried)
+     && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
+     return true;
+     }
+     else {
+     tried ++;
+     }
+     }
+     return false;
+     };
+     */
 };
 
-RepeatMatcher = function(_expr, _backRefManager, indicator) {
+var RepeatMatcher = function(_expr, _backRefManager, indicator) {
     
     this.m_expr = _expr;
     this.m_backRefManager = _backRefManager;
@@ -290,8 +326,8 @@ RepeatMatcher = function(_expr, _backRefManager, indicator) {
     this.m_matcherList = new Array();
     
     this.compile = function() {
-//        console.log(this.m_expr+"  "+indicator);
-//        console.log("repeat matcher compile");
+        //        console.log(this.m_expr+"  "+indicator);
+        //        console.log("repeat matcher compile");
         var matcher;
         if (this.m_expr[0] == '(') {
             matcher = new BackRefMatcher(this.m_expr.substr(0,this.m_indicator), this.m_backRefManager,true);
@@ -336,7 +372,7 @@ RepeatMatcher = function(_expr, _backRefManager, indicator) {
                                                       this.m_expr.length - this.m_indicator - 2);
                 //                console.log(repeatString);
                 var splitRepeat = repeatString.split(',');
-//                console.log(splitRepeat);
+                //                console.log(splitRepeat);
                 if (splitRepeat.length > 1) {
                     this.m_repeatMin = parseInt(splitRepeat[0]);
                     this.m_repeatMax = parseInt(splitRepeat[1]);
@@ -355,7 +391,7 @@ RepeatMatcher = function(_expr, _backRefManager, indicator) {
     };
     
     this.flag = false;
-
+    
     this.match = function(_name, offset, len) {
         this.matchResult = new Name();
         this.flag = false;
@@ -366,7 +402,7 @@ RepeatMatcher = function(_expr, _backRefManager, indicator) {
             for (var i = 0; i < len; i++) {
                 this.matchResult.append(DataUtils.toString(_name.getComponent(i+offset)));
             }
-//            console.log(this.matchResult.to_uri()+"  "+this.m_expr);
+            //            console.log(this.matchResult.to_uri()+"  "+this.m_expr);
             return true;
         } else
             return false;
@@ -380,22 +416,22 @@ RepeatMatcher = function(_expr, _backRefManager, indicator) {
         if (this.flag) {
             return false;
         }
-//        console.log(offset+"  "+len+"  "+now_repeat);
+        //        console.log(offset+"  "+len+"  "+now_repeat);
         if (len == 0) {
             //          console.log(now_repeat+"  "+this.m_repeatMin+"  "+this.m_repeatMax);
             if (now_repeat >= this.m_repeatMin && now_repeat <= this.m_repeatMax) {
-//                console.log("now repeat  "+now_repeat);
+                //                console.log("now repeat  "+now_repeat);
                 this.flag = true;
                 return true;
             }
             else return false;
         }
-//        for (var tried = 0; tried <= len ; tried++)
+        //        for (var tried = 0; tried <= len ; tried++)
         for (var tried = len; tried >= 1; tried--){
             if (this.m_matcherList[0].match(_name, offset, tried))
             {
-//                console.log(this.m_matcherList[0]);
-//                console.log(_name.to_uri()+"  "+offset+"  "+tried);
+                //                console.log(this.m_matcherList[0]);
+                //                console.log(_name.to_uri()+"  "+offset+"  "+tried);
                 if (this.recursiveMatch(_name, offset + tried, len - tried, now_repeat + 1)) {
                     return true;
                 }
@@ -404,9 +440,9 @@ RepeatMatcher = function(_expr, _backRefManager, indicator) {
         return false;
     };
     
-}
+};
 
-PatternListMatcher = function(_expr, _backRefManager) {
+var PatternListMatcher = function(_expr, _backRefManager) {
     this.m_expr = _expr;
     this.m_backRefManager = _backRefManager;
     this.m_matcherList = new Array();
@@ -429,26 +465,26 @@ PatternListMatcher = function(_expr, _backRefManager) {
         var end = index;
         var indicator = index;
         //        console.log(this.m_expr);
-//        console.log(index+"   "+this.m_expr[index]+"  "+this.m_expr);
+        //        console.log(index+"   "+this.m_expr[index]+"  "+this.m_expr);
         switch(this.m_expr[index]){
             case '(':
                 index++;
-//                console.log("left  "+index);
+                //                console.log("left  "+index);
                 index = this.extractSubPattern('(', ')', index);
-//                console.log("right  "+index);
+                //                console.log("right  "+index);
                 indicator = index;
                 end = this.extractRepetition(index);
                 break;
                 
             case '<':
                 index++;
- //               console.log("left  "+index);
+                //               console.log("left  "+index);
                 index = this.extractSubPattern('<', '>', index);
- //               console.log("right  "+index);
+                //               console.log("right  "+index);
                 indicator = index;
                 end = this.extractRepetition(index);
                 break;
-                        //the following is controversial
+                //the following is controversial
             case '[':
                 index++;
                 //               console.log("left  "+index);
@@ -457,7 +493,7 @@ PatternListMatcher = function(_expr, _backRefManager) {
                 indicator = index;
                 end = this.extractRepetition(index);
                 break;
-
+                
             default:
                 console.log("error syntex");
                 return -1;
@@ -466,7 +502,7 @@ PatternListMatcher = function(_expr, _backRefManager) {
         var matcher = new RepeatMatcher(this.m_expr.substr(start, end - start), this.m_backRefManager, indicator - start);
         matcher.compile();
         this.m_matcherList.push(matcher);
-//        console.log(this.m_matcherList);
+        //        console.log(this.m_matcherList);
         //        console.log("end  "+end);
         return end;
     }
@@ -516,45 +552,47 @@ PatternListMatcher = function(_expr, _backRefManager) {
         }
     }
     
-    this.match = function(_name, offset, len){
-        this.m_matchResult = new Name();
-        if (this.recursiveMatch(0,_name, offset, len)) {
-            for (var i = 0 ; i < len ; i++){
-                this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
-            }
-            return true;
-        }else
-            return false;
-    };
-    
-    this.recursiveMatch = function(mid, _name, offset, len) {
-        var tried = 0;
-        //    console.log(mid);
-        if (mid >= this.m_matcherList.length ){
-            if (len != 0)
-                return false;
-            else
-                return true;
-        }
-        //    console.log(this.m_matcherList);
-        var matcher = this.m_matcherList[mid];
-        while (tried <= len) {
-            if (matcher.match(_name, offset,tried)
-                && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
-                return true;
-            }
-            else {
-                tried ++;
-            }
-        }
-        return false;
-    };
-}
+    /*    this.match = function(_name, offset, len){
+     this.m_matchResult = new Name();
+     if (this.recursiveMatch(0,_name, offset, len)) {
+     for (var i = 0 ; i < len ; i++){
+     this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
+     }
+     return true;
+     }else
+     return false;
+     };
+     
+     this.recursiveMatch = function(mid, _name, offset, len) {
+     var tried = 0;
+     //    console.log(mid);
+     if (mid >= this.m_matcherList.length ){
+     if (len != 0)
+     return false;
+     else
+     return true;
+     }
+     //    console.log(this.m_matcherList);
+     var matcher = this.m_matcherList[mid];
+     while (tried <= len) {
+     if (matcher.match(_name, offset,tried)
+     && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
+     return true;
+     }
+     else {
+     tried ++;
+     }
+     }
+     return false;
+     };
+     */
+};
 
-TopMatcher = function(_expr, _backRefManager) {
+var TopMatcher = function(_expr, _backRefManager) {
     this.m_expr = _expr;
     this.m_backRefManager = _backRefManager;
     this.m_matcherList = new Array();
+    
     this.compile = function() {
         var expr;
         if (this.m_expr[0] == '^'){
@@ -573,41 +611,44 @@ TopMatcher = function(_expr, _backRefManager) {
         return true;
     }
     
-    this.match = function(_name, offset, len){
-        this.m_matchResult = new Name();
-        if (this.recursiveMatch(0,_name, offset, len)) {
-            for (var i = 0 ; i < len ; i++){
-                this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
-            }
-            return true;
-        }else
-            return false;
-    };
-    
-    this.recursiveMatch = function(mid, _name, offset, len) {
-        var tried = 0;
-        //    console.log(mid);
-        if (mid >= this.m_matcherList.length ){
-            if (len != 0)
-                return false;
-            else
-                return true;
-        }
-        //    console.log(this.m_matcherList);
-        var matcher = this.m_matcherList[mid];
-        while (tried <= len) {
-            if (matcher.match(_name, offset,tried)
-                && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
-                return true;
-            }
-            else {
-                tried ++;
-            }
-        }
-        return false;
-    };
-}
+    /*    this.match = function(_name, offset, len){
+     this.m_matchResult = new Name();
+     if (this.recursiveMatch(0,_name, offset, len)) {
+     for (var i = 0 ; i < len ; i++){
+     this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
+     }
+     return true;
+     }else
+     return false;
+     };
+     
+     this.recursiveMatch = function(mid, _name, offset, len) {
+     var tried = 0;
+     //    console.log(mid);
+     if (mid >= this.m_matcherList.length ){
+     if (len != 0)
+     return false;
+     else
+     return true;
+     }
+     //    console.log(this.m_matcherList);
+     var matcher = this.m_matcherList[mid];
+     while (tried <= len) {
+     if (matcher.match(_name, offset,tried)
+     && this.recursiveMatch(mid+1, _name, offset + tried, len - tried)) {
+     return true;
+     }
+     else {
+     tried ++;
+     }
+     }
+     return false;
+     };
+     */
+};
 
-//PatternListMatcher.prototype = new RegexMatcher();
+PatternListMatcher.prototype = new RegexMatcher();
 
-//BackRefMatcher.prototype = new RegexMatcher();
+BackRefMatcher.prototype = new RegexMatcher();
+
+TopMatcher.prototype = new RegexMatcher();

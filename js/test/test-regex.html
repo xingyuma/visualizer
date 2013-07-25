@@ -15,10 +15,10 @@
 		function add(){
             str = "ndn-key33";
             re = "ndn-key";
-            _name = new Name("/ndn/tt/kk/app/dd/pp/ok");
+            _name = new Name("/ndn/tt.ucla/tt.ucla/");
             var backRefManager= new BackRefManager();
-//            console.log(re.match(str));
-//            console.log(str.match(re));
+            console.log(str.match(re));
+            console.log(str.search(re));
             
 /*            com = new Component("b+cc",null,true);
             console.log(com.match(_name,1,2));
@@ -37,11 +37,12 @@
 //            console.log(patternList);
             console.log(patternList.match(_name,0,7));
 */
-            topMatcher = new TopMatcher("^((((<ndn>))([<tt><ID-CERT><kk>]){1,2})+<app>)<dd><pp>?<ok>$", backRefManager);
+            
+            topMatcher = new TopMatcher("^((((<^ndn$>))([<^tt\\.ucla$>]){0,1}))$", backRefManager);
             topMatcher.compile();
             console.log(topMatcher);
             //            console.log(patternList);
-            console.log(topMatcher.match(_name,0,7));
+            console.log(topMatcher.match(_name,0,3));
 
 		}
 		function show(){
