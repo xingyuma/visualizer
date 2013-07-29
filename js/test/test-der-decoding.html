@@ -1,0 +1,85 @@
+<?xml version = "1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+<!-- 
+	See COPYING for copyright and distribution information.
+-->
+<html xmlns = "http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>NDN Signature - String</title>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/yahoo/yahoo-min.js"></script>
+
+    <script type="text/javascript" src="../asn1decoder.js"></script>
+    <script type="text/javascript" src="../DerDecoding.js"></script>
+
+    
+ 	<script type="text/javascript">
+		function add(){
+            
+		}
+		function show(){
+
+            var cd = new CertificateDecode("308201743022180f32303133303731383031303230335a180f32303133303731393034303530365a301a300b060355040a130455434c41300b060355040a130455434c4130820122300d06092a864886f70d01010105000382010f003082010a0282010100e5249baaefcfad75ef83d62c8c276fc3347fffc100a79885cca78996fc8b313b2ba60228f1c605b249b212cbf5da7b5f6cefd490e04543b663346ec3dfce334d3af47e34425ce090ff9c725ac7a9971bc1280b7f7352bb840acf13d740011befb9679c9c2eb9d9c75a8a2e1c79eaceb53a2df7c42b2d2fceddfe27831b2b53e28fc44bc50e62037d202674fd5f8ae51556886ce5c3f32a17fdc29c77f1976a682ddeb05933539c93beaaaefa5505f67a50350359ed5aa699f092b2de660f943f6d2521d9034d71096729953ef5d40d62b953b9a4d7c1e4bd38335711f64546f04f28ab17cc5694d7bf0bc2e571f5aefbd3c39aa1bae094607e65502aa89f133f0203010001300c060355040b0101ff04022324");
+            cd.parse();
+            console.log(cd.keyBit);
+//            console.log(cd.getKey);
+//            console.log("sdfas");
+//            output.getEncodedHex()
+            
+//            var hDATA = output.getEncodedHex(); // result will be 300f0201030c056170706c650603550405
+ //           console.log(hDATA);
+		}
+
+	</script>
+	
+
+</head>
+<body >
+	<form>
+ 		
+		<input id="privateKey" type="hidden" value="-----BEGIN RSA PRIVATE KEY-----
+			MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
+			Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
+			NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
+			AoGAA9/q3Zk6ib2GFRpKDLO/O2KMnAfR+b4XJ6zMGeoZ7Lbpi3MW0Nawk9ckVaX0
+			ZVGqxbSIX5Cvp/yjHHpww+QbUFrw/gCjLiiYjM9E8C3uAF5AKJ0r4GBPl4u8K4bp
+			bXeSxSB60/wPQFiQAJVcA5xhZVzqNuF3EjuKdHsw+dk+dPECQQDubX/lVGFgD/xY
+			uchz56Yc7VHX+58BUkNSewSzwJRbcueqknXRWwj97SXqpnYfKqZq78dnEF10SWsr
+			/NMKi+7XAkEA4PVqDv/OZAbWr4syXZNv/Mpl4r5suzYMMUD9U8B2JIRnrhmGZPzL
+			x23N9J4hEJ+Xh8tSKVc80jOkrvGlSv+BxwJAaTOtjA3YTV+gU7Hdza53sCnSw/8F
+			YLrgc6NOJtYhX9xqdevbyn1lkU0zPr8mPYg/F84m6MXixm2iuSz8HZoyzwJARi2p
+			aYZ5/5B2lwroqnKdZBJMGKFpUDn7Mb5hiSgocxnvMkv6NjT66Xsi3iYakJII9q8C
+			Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
+			dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
+			-----END RSA PRIVATE KEY-----"></input>
+		
+		
+		<input id="certificate" type="hidden" value="-----BEGIN CERTIFICATE-----
+			MIIBvTCCASYCCQD55fNzc0WF7TANBgkqhkiG9w0BAQUFADAjMQswCQYDVQQGEwJK
+			UDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwHhcNMTAwNTI4MDIwODUxWhcNMjAwNTI1
+			MDIwODUxWjAjMQswCQYDVQQGEwJKUDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwgZ8w
+			DQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANGEYXtfgDRlWUSDn3haY4NVVQiKI9Cz
+			Thoua9+DxJuiseyzmBBe7Roh1RPqdvmtOHmEPbJ+kXZYhbozzPRbFGHCJyBfCLzQ
+			fVos9/qUQ88u83b0SFA2MGmQWQAlRtLy66EkR4rDRwTj2DzR4EEXgEKpIvo8VBs/
+			3+sHLF3ESgAhAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAEZ6mXFFq3AzfaqWHmCy1
+			ARjlauYAa8ZmUFnLm0emg9dkVBJ63aEqARhtok6bDQDzSJxiLpCEF6G4b/Nv/M/M
+			LyhP+OoOTmETMegAVQMq71choVJyOFE5BtQa6M/lCHEOya5QUfoRF2HF9EjRF44K
+			3OK+u3ivTSj3zwjtpudY5Xo=
+			-----END CERTIFICATE-----"></input>
+
+		Please Enter a Text to sign:<br /><input id="contentName" type="text" name="CONTENTNAME" value="/ndn/ucla.edu/alice/mHealth/20130625/D-KEY" /> <br />
+	
+	</form>
+	<button onclick="add()">Add Policy</button>
+	<button onclick="show()">Show policies</button>
+	
+	
+
+		<p id="result"></p>
+
+		
+	
+</body>
+
+</html>

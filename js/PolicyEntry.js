@@ -1,4 +1,7 @@
-
+/*
+ Author: Xingyu Ma
+ 
+ */
 var PolicyEntry = function PolicyEntry(_item){
 	this.prefix = null;
 	this.authority = null;

@@ -1,3 +1,7 @@
+/*
+ Author: Xingyu Ma
+ */
+
 var Component = function(_exp, _backRefManager, _exact){
     this.exp = _exp;
     this.backRefManager = _backRefManager;

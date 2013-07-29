@@ -1,0 +1,78 @@
+<?xml version = "1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+<!-- 
+	See COPYING for copyright and distribution information.
+-->
+<html xmlns = "http://www.w3.org/1999/xhtml">
+
+<head>
+	<title>NDN Signature - String</title>
+
+    <script type="text/javascript" src="../build/ndn.js"></script>
+    <script type="text/javascript" src="../asn1decoder.js"></script>
+	<script type="text/javascript">
+		function add(){
+            var s1 ="308201733022180F32303133303731383031303230335A180F32303133303731393034303530365A3027300B060355040A130455434C413009060355040413025975300D060355042A130659696E67646930820122300D06092A864886F70D01010105000382010F003082010A0282010100E5249BAAEFCFAD75EF83D62C8C276FC3347FFFC100A79885CCA78996FC8B313B2BA60228F1C605B249B212CBF5DA7B5F6CEFD490E04543B663346EC3DFCE334D3AF47E34425CE090FF9C725AC7A9971BC1280B7F7352BB840ACF13D740011BEFB9679C9C2EB9D9C75A8A2E1C79EACEB53A2DF7C42B2D2FCEDDFE27831B2B53E28FC44BC50E62037D202674FD5F8AE51556886CE5C3F32A17FDC29C77F1976A682DDEB05933539C93BEAAAEFA5505F67A50350359ED5AA699F092B2DE660F943F6D2521D9034D71096729953EF5D40D62B953B9A4D7C1E4BD38335711F64546F04F28AB17CC5694D7BF0BC2E571F5AEFBD3C39AA1BAE094607E65502AA89F133F0203010001";
+            var cert = readASN1(s1);
+            var certDecode = new CertificateDecode(cert);
+            certDecode.parse();
+		}
+		function show(){
+    //        for (var i = 0; i < policy.PolicyStore.length; i++) {
+      //         document.getElementById('result').innerHTML = policy.PolicyStore[i].prefix;
+        //    }
+		}
+
+	</script>
+	
+
+</head>
+<body >
+	<form>
+		
+		<input id="privateKey" type="hidden" value="-----BEGIN RSA PRIVATE KEY-----
+			MIICWwIBAAKBgQDRhGF7X4A0ZVlEg594WmODVVUIiiPQs04aLmvfg8SborHss5gQ
+			Xu0aIdUT6nb5rTh5hD2yfpF2WIW6M8z0WxRhwicgXwi80H1aLPf6lEPPLvN29EhQ
+			NjBpkFkAJUbS8uuhJEeKw0cE49g80eBBF4BCqSL6PFQbP9/rByxdxEoAIQIDAQAB
+			AoGAA9/q3Zk6ib2GFRpKDLO/O2KMnAfR+b4XJ6zMGeoZ7Lbpi3MW0Nawk9ckVaX0
+			ZVGqxbSIX5Cvp/yjHHpww+QbUFrw/gCjLiiYjM9E8C3uAF5AKJ0r4GBPl4u8K4bp
+			bXeSxSB60/wPQFiQAJVcA5xhZVzqNuF3EjuKdHsw+dk+dPECQQDubX/lVGFgD/xY
+			uchz56Yc7VHX+58BUkNSewSzwJRbcueqknXRWwj97SXqpnYfKqZq78dnEF10SWsr
+			/NMKi+7XAkEA4PVqDv/OZAbWr4syXZNv/Mpl4r5suzYMMUD9U8B2JIRnrhmGZPzL
+			x23N9J4hEJ+Xh8tSKVc80jOkrvGlSv+BxwJAaTOtjA3YTV+gU7Hdza53sCnSw/8F
+			YLrgc6NOJtYhX9xqdevbyn1lkU0zPr8mPYg/F84m6MXixm2iuSz8HZoyzwJARi2p
+			aYZ5/5B2lwroqnKdZBJMGKFpUDn7Mb5hiSgocxnvMkv6NjT66Xsi3iYakJII9q8C
+			Ma1qZvT/cigmdbAh7wJAQNXyoizuGEltiSaBXx4H29EdXNYWDJ9SS5f070BRbAIl
+			dqRh3rcNvpY6BKJqFapda1DjdcncZECMizT/GMrc1w==
+			-----END RSA PRIVATE KEY-----"></input>
+		
+		
+		<input id="certificate" type="hidden" value="-----BEGIN CERTIFICATE-----
+			MIIBvTCCASYCCQD55fNzc0WF7TANBgkqhkiG9w0BAQUFADAjMQswCQYDVQQGEwJK
+			UDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwHhcNMTAwNTI4MDIwODUxWhcNMjAwNTI1
+			MDIwODUxWjAjMQswCQYDVQQGEwJKUDEUMBIGA1UEChMLMDAtVEVTVC1SU0EwgZ8w
+			DQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANGEYXtfgDRlWUSDn3haY4NVVQiKI9Cz
+			Thoua9+DxJuiseyzmBBe7Roh1RPqdvmtOHmEPbJ+kXZYhbozzPRbFGHCJyBfCLzQ
+			fVos9/qUQ88u83b0SFA2MGmQWQAlRtLy66EkR4rDRwTj2DzR4EEXgEKpIvo8VBs/
+			3+sHLF3ESgAhAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAEZ6mXFFq3AzfaqWHmCy1
+			ARjlauYAa8ZmUFnLm0emg9dkVBJ63aEqARhtok6bDQDzSJxiLpCEF6G4b/Nv/M/M
+			LyhP+OoOTmETMegAVQMq71choVJyOFE5BtQa6M/lCHEOya5QUfoRF2HF9EjRF44K
+			3OK+u3ivTSj3zwjtpudY5Xo=
+			-----END CERTIFICATE-----"></input>
+
+		Please Enter a Text to sign:<br /><input id="contentName" type="text" name="CONTENTNAME" value="/ndn/ucla/BoelterHall/utility/log/" /> <br />
+	
+	</form>
+	<button onclick="add()">Add Policy</button>
+	<button onclick="show()">Show policies</button>
+	
+	
+
+		<p id="result"></p>
+
+		
+	
+</body>
+
+</html>
