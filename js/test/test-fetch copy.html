@@ -25,7 +25,7 @@
                     var ndn = new NDN({host:"127.0.0.1"});
                 console.log("1");
                 ndn.onopen = function () {
-                    var n = new Name('/ndn/ucla.edu/alice/mHealth/20130625/D-KEY');
+                    var n = new Name('/aa/bb/1.txt');
                     var template = new Interest();
                     template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;  // bypass cache in ccnd
                     template.interestLifetime = 1000;

@@ -22,7 +22,8 @@
             console.log('Interest received in callback.');
             console.log(inst.name.to_uri());
             
-            var nameStr = inst.name.getName();
+            var content = ndn.default_key.publicKeyPem;
+            var nameStr = inst.name.to_uri();
             if (nameStr == "/aa/bb/1.txt")
             {
                 var name = new Name("/aa/bb/ID-CERT");
@@ -35,16 +36,14 @@
                 if (nameStr == "/aa/bb/ID-CERT" || nameStr == "/aa/ID-CERT"){
                     var name = new Name("/aa/ID-CERT");
                     var keyname = new KeyName(name);
-                    content = globalKeyManager.publicKey;
+//                    content = globalKeyManager.publicKey;
                 }
             }
-            var keyPara = {KeyName: keyname};
-            var si = new SignedInfo();
-            var mykey = ndn.getDefaultKey();
-            si.setFields(keyname,keyPara);
-            var co = new ContentObject(inst.name, ('NDN.JS needs refactoring. ' + inst.name.to_uri()),si);
+            var keyPara = {keyName: keyname};
+            var co = new ContentObject(inst.name, content);
+            //            var co = new ContentObject(inst.name, ('NDN.JS needs refactoring. ' + inst.name.to_uri()));
             
-            co.sign(mykey);
+            co.sign(mykey,keyPara);
             //        console.log(co.content.);
             try {
                 ndn.send(co);

@@ -10,12 +10,14 @@
 	<title>NDN Signature - String</title>
 
     <script type="text/javascript" src="../build/ndn.js"></script>
-    <script type="text/javascript" src="../PolicyEntry.js"></script>		
+    <script type="text/javascript" src="../Policy.js"></script>		
 	<script type="text/javascript">
         var policy = new Policy();
         var roleStore = new RoleStore();
 		function add(){
-            roleStore.addRoleEntry(".QualOfficer:-\"/ndn/ucla/BoelterHall/\".QualOrg.Manager");
+            
+             console.log("aaadfas");
+/*            roleStore.addRoleEntry(".QualOfficer:-\"/ndn/ucla/BoelterHall/\".QualOrg.Manager");
             roleStore.addRoleEntry(".QualOfficer:-\"/ndn/ucla/BoelterHall/\".QualOrg.Admin");
             console.log(roleStore.getDefinitionByRoleName(".QualOfficer"));
             var instance1 = RoleVerifySingleton.getInstance();
@@ -23,6 +25,8 @@
             var _policyEntry = new PolicyEntry("/ndn/ucla/BoelterHall/utility/log/:.QualOfficer");
             policy.addPolicyEntry(_policyEntry);
             instance1.init(document.getElementById('contentName').value,policy,roleStore);
+ */
+            
 //            instance1.obtainChain(document.getElementById('contentName').value,policy);
             
 //            alert(policy.verify("/a/bb/c/d.txt","/a/b/ID-CERT"));
@@ -31,7 +35,7 @@
 		}
 		function show(){
     //        for (var i = 0; i < policy.PolicyStore.length; i++) {
-      //         document.getElementById('result').innerHTML = policy.PolicyStore[i].prefix;
+      //          = policy.PolicyStore[i].prefix;
         //    }
 		}
 

@@ -1,0 +1,97 @@
+<?xml version = "1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+<!-- 
+	See COPYING for copyright and distribution information.
+-->
+<html xmlns = "http://www.w3.org/1999/xhtml">
+
+<head>    
+	<title>Visualizer</title>
+
+    <script type="text/javascript" src="../build/ndn.js"></script>
+    <script type="text/javascript" src="../Policy.js"></script>
+    <script type="text/javascript" src="./bootstrap.js"></script>
+    <link rel="stylesheet" type="text/css" href="./bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="./layout.css" />
+    
+    
+	<script type="text/javascript">
+        var policy = new Policy();
+        policy.addPolicyEntry(new PolicyEntry("/aa/bb/1.txt:/aa/bb/ID-CERT"));
+        policy.addPolicyEntry(new PolicyEntry("/aa/bb/ID-CERT:/aa/ID-CERT"));
+        policy.addPolicyEntry(new PolicyEntry("/aa/ID-CERT:/aa/ID-CERT"));
+        function showPolicy(){
+            document.getElementById('policyOutput').innerHTML = "";
+            for (var i = 0 ; i < policy.PolicyStore.length; i++) {
+                document.getElementById('policyOutput').innerHTML += "<p>"+policy.PolicyStore[i].prefix+" : "+policy.PolicyStore[i].authority +"</p>";
+            }
+        }
+        
+        function search() {
+//            console.log("aaadfas");
+            var id = IdentityVerifySingleton.getInstance();
+            id.init("/aa/bb/1.txt",policy);
+//            document.getElementById('result').innerHTML = "dsfads";
+//            console.log(id.chain);
+        }
+	</script>
+	
+
+</head>
+<body >
+    <div id="HEADER">
+        <div class="page-header">
+            <h1>Visualizer</h1>
+        </div>
+    </div>
+    
+    <div id="WRAPPER">
+        <div id="SIDE">
+            <h3>Policy </h3>
+            <div class="BOX">
+                <input id = "addPolicy" type="text" class="form-control" style="width: 200px;">
+                    <button  type="submit" class="btn btn-default ">Add Policy</button>
+                    <button  type="submit" class="btn btn-default" onclick="showPolicy()">Show Policy</button>
+                </textarea>
+            </div>
+            <div class="BOX">
+                    <textarea id ="policyOutput">
+                    </textarea>
+            </div>
+        </div>
+        <div id="CONTENT">
+            <h3>Chain Visualization</h3>
+            <div class="BOX">
+                <input id = "query" type="text" class="form-control" style="width: 200px;">
+                    <button  type="submit" class="btn btn-default" onclick="search()">Submit</button>
+                    </div>
+            <div class="BOX" id = "resultarea">
+                <div class="row show-grid">
+                    <div class="col-lg-5">
+                        <div class="well well-large" id="resultd0">...</div>
+                    </div>
+                </div>
+                
+                <div class="row show-grid">
+                    <div class="col-lg-5">
+                        <div class="well well-large" id="resultfd1">...</div>
+                    </div>
+                </div>
+                
+                <div class="row show-grid">
+                    <div class="col-lg-5">
+                        <div class="well well-large" id="resultds2">...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="BOX">
+                
+            </div>
+            
+        </div>
+    </div>
+	
+</body>
+
+</html>

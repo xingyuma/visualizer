@@ -11,25 +11,49 @@
         <h1>Visualizer</h1>
     </div>
     
-	<title>NDN Signature - String</title>
+	<title>Visualizer</title>
 
     <script type="text/javascript" src="../build/ndn.js"></script>
-    <script type="text/javascript" src="../PolicyEntry.js"></script>		
+    <script type="text/javascript" src="../Policy.js"></script>
+    <link rel="stylesheet" type="text/css" href="./bootstrap.css" />
 	<script type="text/javascript">
+        var policy = new Policy();
+        function search() {
+            console.log("aaadfas");
+            var id = IdentityVerifySingleton.getInstance();
+            id.init("/aa/bb/1.txt",policy);
+            document.getElementById('result').innerHTML = id.chain;
+//            console.log(id.chain);
+        }
 	</script>
 	
-    <link rel="stylesheet" type="text/css" href="./bootstrap.css" /> 
 
 </head>
 <body >
+    <p id="result"></p>
+    
     <form class="navbar-form">
-        <input type="text" class="form-control" style="width: 200px;">
-            <button type="submit" class="btn btn-default">Submit</button>
+        <input id = "query" type="text" class="form-control" style="width: 200px;">
+            <button  type="submit" class="btn btn-default" onclick="search()">Submit</button>
     </form>
     
-    <div class="well">...</div>
-    <div class="well">...</div>
-    <div class="well">...</div>
+    <div class="row show-grid">
+        <div class="col-lg-5">
+            <div class="well well-large">...</div>
+        </div>
+    </div>
+
+    <div class="row show-grid">
+        <div class="col-lg-5">
+            <div class="well well-large">...</div>
+        </div>
+    </div>
+
+    <div class="row show-grid">
+        <div class="col-lg-5">
+            <div class="well well-large">...</div>
+        </div>
+    </div>
     
     <br /><form class="navbar-form">
         <button type="submit" class="btn btn-default">Add Policy</button>
@@ -37,7 +61,6 @@
             <button type="submit" class="btn btn-default">Show policy</button>
             </form></>
 
-    
 	
 </body>
 
