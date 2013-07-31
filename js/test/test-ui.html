@@ -1,65 +1,72 @@
-<style>
-    .Nav {
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>无标题页</title>
         
-    }
-    .Nav li{
-        float:left;
-        display:block;
-        position:relative;
-    }
-    .Nav a{
-        float:left;
-        display:block;
-        position:relative;
-        padding:2px 10px 2px 10px;
-        font-size:13px;
-        text-decoration: none;
-    }
-    .Nav li a:hover
-    {
-        color:#ffffff;
-        background:#ea0000;
-    }
-    .Nav li table {
-        display:none;
-        border-collapse:collapse;
-    }
-    .Nav li:hover table, .Nav a:hover table {
-        display:block;
-        position:absolute;
-        top:18px;
-        left:0;
-        background:#ea0000;
-    }
-    .Nav li:hover table a, .Nav a:hover table a {
-        float:none;
-        background:#f2f2f2;
-        color:#000;
-        width:120px;
-        border-bottom:1px solid #fff;
-    }
-    .Nav li:hover table a:hover, .Nav a:hover table a:hover {
-        background:#565656;
-        color:#fff;
-    }
-    </style>
-
-<div class='Nav'>
-    <li>
-        <a href='#'>产品
-            <table><tr><td>
-                <a href='#1'>内容管理系统</a>
-                <a href='#2'>竞争情报系统</a>
-            </td></tr></table>
-        </a>
-    </li>
-    <li>
-        <a href='#'>客户服务
-            <table><tr><td>
-                <a href='#1'>技术支持</a>
-                <a href='#2'>留言反馈</a>
-                <a href='#3'>在线帮助</a>
-            </td></tr></table>
-        </a>
-    </li>
-</div>
+        <script type="text/javascript">
+            function showDiv(e)
+            {
+                var o = document.getElementById("hidDiv");
+                //o.style.left = e.clientX;//这种赋值方法，IE下可以，在firefox下不起作用
+                //o.style.top = e.clientY;
+                o.style.left = e.clientX+"px";
+                o.style.top = e.clientY+10+"px";
+                o.style.display="block";
+            }
+            </script>
+        
+    </head>
+    <body>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)">
+        </div>
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)">
+        </div> 
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)"> 
+        </div> 
+        <div style="width: 168px; height: 24px; background-color: #ccff66;" onMouseOver="showDiv(event)"> 
+        </div> 
+        <div style="width: 168px; height: 24px; background-color: #ffff66;" onMouseOver="showDiv(event)"> 
+        </div> 
+        <div id="hidDiv" style="width: 238px; position: absolute; display: none; height: 120px;left: 228px; top: 22px; background-color: #ffcc33;"> 
+        </div> 
+    </body> 
+</html>

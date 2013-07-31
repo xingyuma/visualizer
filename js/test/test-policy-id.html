@@ -18,8 +18,11 @@
 	<script type="text/javascript">
         var policy = new Policy();
         policy.addPolicyEntry(new PolicyEntry("/aa/bb/1.txt:/aa/bb/ID-CERT"));
-//        policy.addPolicyEntry(new PolicyEntry("/aa/bb/ID-CERT:/aa/ID-CERT"));
-//        policy.addPolicyEntry(new PolicyEntry("/aa/ID-CERT:/aa/ID-CERT"));
+        policy.addPolicyEntry(new PolicyEntry("/aa/bb/ID-CERT:/aa/ID-CERT"));
+        policy.addPolicyEntry(new PolicyEntry("/aa/ID-CERT:/aa/ID-CERT"));
+        function addAPolicy() {
+            
+        }
         function showPolicy(){
             var tb = document.getElementById("mytable");
             for (var i =  tb.rows.length -1; i >= 1; i--) {
@@ -83,6 +86,10 @@
                     </tr>
                     </div>
         </div>
+    </div>
+    
+    <div id="hidDiv" style="position: absolute; display: none; ">
+        <div class="alert alert-success">Policy Error</div>
     </div>
     
 </body>
