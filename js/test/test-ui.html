@@ -1,29 +1,65 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>||Working with elements||</title>
-    </head>
-    
-    <script>
-        var my_div = null;
-        var newDiv = null;
+<style>
+    .Nav {
         
-        function addElement () {
-            // create a new div element
-            // and give it some content
-            var newDiv = document.createElement("div");
-            var newContent = document.createTextNode("Hi there and greetings!");
-            
-            newDiv.appendChild(newContent); //add the text node to the newly created div.
-            
-            // add the newly created element and its content into the DOM
-            my_div = document.getElementById("org_div1");
-            document.body.insertBefore(newDiv, my_div);
-        }
-        
-        </script>
-    
-    <body onload="addElement()">
-        <div id='org_div1'> The text above has been created dynamically.</div>
-    </body>
-</html>
+    }
+    .Nav li{
+        float:left;
+        display:block;
+        position:relative;
+    }
+    .Nav a{
+        float:left;
+        display:block;
+        position:relative;
+        padding:2px 10px 2px 10px;
+        font-size:13px;
+        text-decoration: none;
+    }
+    .Nav li a:hover
+    {
+        color:#ffffff;
+        background:#ea0000;
+    }
+    .Nav li table {
+        display:none;
+        border-collapse:collapse;
+    }
+    .Nav li:hover table, .Nav a:hover table {
+        display:block;
+        position:absolute;
+        top:18px;
+        left:0;
+        background:#ea0000;
+    }
+    .Nav li:hover table a, .Nav a:hover table a {
+        float:none;
+        background:#f2f2f2;
+        color:#000;
+        width:120px;
+        border-bottom:1px solid #fff;
+    }
+    .Nav li:hover table a:hover, .Nav a:hover table a:hover {
+        background:#565656;
+        color:#fff;
+    }
+    </style>
+
+<div class='Nav'>
+    <li>
+        <a href='#'>产品
+            <table><tr><td>
+                <a href='#1'>内容管理系统</a>
+                <a href='#2'>竞争情报系统</a>
+            </td></tr></table>
+        </a>
+    </li>
+    <li>
+        <a href='#'>客户服务
+            <table><tr><td>
+                <a href='#1'>技术支持</a>
+                <a href='#2'>留言反馈</a>
+                <a href='#3'>在线帮助</a>
+            </td></tr></table>
+        </a>
+    </li>
+</div>
