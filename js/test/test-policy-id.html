@@ -11,18 +11,90 @@
 
     <script type="text/javascript" src="../build/ndn.js"></script>
     <script type="text/javascript" src="../Policy.js"></script>
+    <script type="text/javascript" src="../regex.js"></script>
+    <script type="text/javascript" src="../xml/jsonxmllib.js"></script>
+    <script type="text/javascript" src="./raphael-min.js"></script>
+    <script type="text/javascript" src="../Identity-Cert.js"></script>
     <link rel="stylesheet" type="text/css" href="./bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="./layout.css" />
     
     
 	<script type="text/javascript">
         var policy = new Policy();
-        policy.addPolicyEntry(new PolicyEntry("/aa/bb/1.txt:/aa/bb/ID-CERT"));
-        policy.addPolicyEntry(new PolicyEntry("/aa/bb/ID-CERT:/aa/ID-CERT"));
-        policy.addPolicyEntry(new PolicyEntry("/aa/ID-CERT:/aa/ID-CERT"));
-        function addAPolicy() {
-            
+        
+/*        var s = "<IdentityPolicy><DataRegex>^(&lt;&gt;*)&lt;DNS&gt;(&lt;&gt;*)$</DataRegex><SignerRegex>^(&lt;&gt;*)&lt;DNS&gt;(&lt;&gt;*)&lt;&gt;&lt;NDNCERT&gt;</SignerRegex><Op>&gt;=</Op><DataExpand>\\1\\2</DataExpand><SignerExpand>\\1\\2</SignerExpand><MustVerify>1</MustVerify></IdentityPolicy>";
+        var parser=new DOMParser();
+        xmlDoc=parser.parseFromString(s,"text/xml");
+        policy.addPolicyEntry(new PolicyEntry(xmlDoc,"xml"));
+*/
+        policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<bb>)<ID-CERT>","(<xx>)<ID-CERT>","**","\\1","\\1","1"],"array"));
+        policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)<><ID-CERT>","(<aa>)(<>*)<ID-CERT>",">=","\\1\\2","\\1\\2","1"],"array"));
+        policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)[^<ID-CERT>]","(<aa>)(<>*)<ID-CERT>",">=","\\1\\2","\\1\\2","1"],"array"));
+        
+        var paper = null;
+        var now;//= new Date();
+        window.onload = function () {
+            paper = Raphael(50, 250, 800, 1800);
         }
+        function uiOutput(_list,flag) {
+            paper.clear();
+            var start = [];
+            var end = [];
+            var lasty = 0;
+            var now2 = new Date();
+            var datetime = now2.getFullYear()+'/'+(now2.getMonth()+1)+'/'+now2.getDay();
+            datetime += ' '+now2.getHours()+':'+now2.getMinutes()+':'+now2.getSeconds()+':'+now2.getMilliseconds();
+//            console.log(now2.getTime());
+//            console.log(datetime);
+//            alert(now2.getTime() - now.getTime());
+            for (var i = 0; i < _list.length; i++) {
+                var width = 200;
+                var height  = 50;
+                var x = 140;
+                var y = lasty + 40 ;
+                var rect = this.paper.rect(x, y , width, height, 10);
+                var txt = _list[i].name.to_uri();
+                var line_cap = 20;
+                var line_number = Math.floor(txt.length/line_cap);
+                var tmp_txt = "";
+                for (var j = 0 ; j < line_number; j++) {
+//                    console.log(txt.substring(j*line_cap,line_cap));
+                    console.log(j*line_cap);
+                    console.log(j*line_cap + line_cap -1);
+                    tmp_txt += txt.substring(j*line_cap,j*line_cap + line_cap);
+                    tmp_txt += "\n";
+                }
+                console.log(line_number * line_cap);
+                console.log(txt.length);
+                tmp_txt += txt.substring((line_number) * line_cap, txt.length);
+                console.log(tmp_txt);
+                var t = this.paper.text(x+100, y+20, tmp_txt);
+                t.attr("font-size",15);
+                lasty = y + height;
+                start[i] = y;
+                end[i] = lasty;
+//                var c = this.paper.image("Arrow.gif",x+100,end[i]+5, 40, start[i+1] - end[i] - 10);
+            }
+            for (var i = 0 ; i < _list.length -1 ; i++) {
+                var c = this.paper.image("Arrow.gif",220,end[i]+5, 40, start[i+1] - end[i] - 10);
+            }
+            
+            if (flag) {
+                var t = this.paper.text(250,end[_list.length - 1] + 50, "verification successful!");
+                t.attr("font-size",20);
+            }
+            else {
+                var t = this.paper.text(250,end[_list.length - 1] + 50, "verification unsuccessful!");
+                t.attr("font-size",20);
+            }
+            var t = this.paper.text(250, end[_list.length - 1] + 100, "time used: "+ (now2.getTime() - now.getTime()) +" milliseconds");
+            t.attr("font-size",20);
+        }
+        
+        function addPolicy() {
+            policy.addPolicyEntry(new PolicyEntry(document.getElementById('addPolicy').value));
+        }
+        
         function showPolicy(){
             var tb = document.getElementById("mytable");
             for (var i =  tb.rows.length -1; i >= 1; i--) {
@@ -33,15 +105,45 @@
                 var row=table.insertRow(-1);
                 var cell1=row.insertCell(0);
                 var cell2=row.insertCell(1);
-                cell1.innerHTML=policy.PolicyStore[i].prefix;
-                cell2.innerHTML=policy.PolicyStore[i].authority;
-            }
+                var cell3=row.insertCell(2);
+                var cell4=row.insertCell(3);
+                var cell5=row.insertCell(4);
+                var cell6=row.insertCell(5);
+//                var s1 = policy.PolicyS5ore[i].dataRegex;
+                var text1 = document.createTextNode(policy.PolicyStore[i].dataRegex);
+                var text2 = document.createTextNode(policy.PolicyStore[i].signerRegex);
+                var text3 = document.createTextNode(policy.PolicyStore[i].op);
+                var text4 = document.createTextNode(policy.PolicyStore[i].dataExpand);
+                var text5 = document.createTextNode(policy.PolicyStore[i].signerExpand);
+                var text6 = document.createTextNode(policy.PolicyStore[i].mustVerify);
+                cell1.appendChild(text1);
+                cell2.appendChild(text2);
+                cell3.appendChild(text3);
+                cell4.appendChild(text4);
+                cell5.appendChild(text5);
+                cell6.appendChild(text6);
+                console.log(policy.PolicyStore[i].generateXML());
+           }
         }
         
-        function search() { 
+        function search() {
+
 //            console.log("aaadfas");
-            var id = IdentityVerifySingleton.getInstance();
-            id.init("/aa/bb/1.txt",policy);
+//            var id = IdentityVerifySingleton.getInstance();
+//            id.init("/aa/bb/1.txt",policy);
+            var id = new IdentityVerify();
+            var trust_anchor = [ {key_name: new Name("/xx/ID-CERT"),
+                                key:  "-----BEGIN PUBLIC KEY-----\n" +
+                                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDNpgZFC23yGSLsMo8mzTcmdni\n" +
+                                "pkUHI+i8CYagTEqHO+PnejF9Ep/D+MBvEtPXHSgExsDCHP8X7B6If1df58OWXB9G\n" +
+                                "PnXUsAsjKKXgOaKoMJr9NZXPqlBbJSrT0h5590hCm2ePPUVkvJKsOX6gCFnptbLz\n" +
+                                "F7pvb3zKDc+zXjyHPwIDAQAB\n" +
+                                "-----END PUBLIC KEY-----"} ];
+            id.init_para(trust_anchor,policy,uiOutput);
+//            console.log(trust_anchor);
+            now = new Date();
+//            id.init(document.getElementById('query').value,policy,uiOutput);
+            id.init("/aa/bb/cc/1.txt");
 //            document.getElementById('result').innerHTML = "dsfads";
 //            console.log(id.chain);
         }
@@ -74,17 +176,11 @@
             <h3>Policy </h3>
             <div class="BOX">
                 <input id = "addPolicy" type="text" class="form-control" style="width: 200px;">
-                    <button  type="submit" class="btn btn-default ">Add Policy</button>
+                    <button  type="submit" class="btn btn-default" onclick="addPolicy()">Add Policy</button>
                     <button  type="submit" class="btn btn-default" onclick="showPolicy()">Show Policy</button>
                     </textarea>
                     </div>
-            <div class="BOX">
-                <table id="mytable" cellspacing="0">
-                    <tr>
-                        <th scope="col" >Data Prefix</th>
-                        <th scope="col" >Key Locator</th>
-                    </tr>
-                    </div>
+
         </div>
     </div>
     
@@ -92,6 +188,19 @@
         <div class="alert alert-success">Policy Error</div>
     </div>
     
+    <div id="FOOTER">
+        <div class="BOX">
+            <table id="mytable" cellspacing="0">
+                <tr>
+                    <th scope="col" >Data Regex</th>
+                    <th scope="col" >Key Regex</th>
+                    <th scope="col" >Op</th>
+                    <th scope="col" >Data Expand</th>
+                    <th scope="col" >Key Expand</th>
+                    <th scope="col" >MustVerify</th>
+                </tr>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -4,45 +4,54 @@
     <title>Name object test</title>
 	
     <script src="../build/ndn.js"></script>
+    <script type="text/javascript" src="../Policy.js"></script>
+    <script type="text/javascript" src="../regex.js"></script>
+    <script type="text/javascript" src="../xml/xml2json.js"></script>
+    <script type="text/javascript" src="../xml/json2xml.js"></script>
+        <script type="text/javascript" src="../xml/jsonxmllib.js"></script>
+
 
     <script>
+    function testName () {
+        console.log("\\1\\2");
+        var s = "<IdentityPolicy><DataRegex>^(&lt;aa&gt;)(&lt;bb&gt;*)</DataRegex><SignerRegex>(&lt;aa&gt;)&lt;&gt;*&lt;ID-CERT&gt;</SignerRegex><Op>&gt;=</Op><DataExpand>\\1\\2</DataExpand><SignerExpand>\\1\\2</SignerExpand><MustVerify>1</MustVerify></IdentityPolicy>";
+        var parser=new DOMParser();
+        xmlDoc=parser.parseFromString(s,"text/xml");
+        console.log(xmlDoc);
+//        var tmp = (xml2json(xmlDoc));
+//        console.log(escape("<\>"));
+        var r = {
+            "IdentityPolicy":{"DataRegex":"^(<>*)<DNS>(<>*)$","SignerRegex":"^(<>*)<DNS>(<>*)<><NDNCERT>","Op":">=","DataExpand":"\\1\\2","SignerExpand":"\\1\\2","MustVerify":"1"}
+        };
+        var tt = new X2JS();
+        console.log(tt.json2xml_str(r));
 
-function testName () {
-    var result = document.getElementById('result');
-    result.innerHTML = "";
-
-    var n0 = new Name("/%C1.M.S.localhost/%C1.M.SRV/ccnd/KEY");
-    result.innerHTML += "<p>Name object for '/%C1.M.S.localhost/%C1.M.SRV/ccnd/KEY':"
-                      + "<br />URI representation: " + n0.to_uri() + "</p>";
-    console.log(n0.to_xml());
-    
-    var ndn = new NDN();
-    var n1 = new Name('/ndn.js/%C1%00/test01');
-    n1.appendKeyID(ndn.getDefaultKey()).appendVersion().appendSegment(0);
-
-    result.innerHTML += "<p>Name for the NDN default key:"
-                      + "<br />URI representation: " + n1.to_uri() + "</p>";
-
-    var n2 = new Name('/a/b/c.txt/');
-    result.innerHTML += "A new Name object:";
-    result.innerHTML += "<br />URI representation: " + n2.to_uri();
-    var n3 = new Name(n2);
-    result.innerHTML += "<br />Make a copy:";
-    result.innerHTML += "<br />URI representation: " + n3.to_uri();
-    result.innerHTML += "<br />Make some change to the copy:";
-    n3.appendVersion().appendSegment(0);
-    result.innerHTML += "<br />URI representation: " + n3.to_uri();
-    result.innerHTML += "<br />Original name:";
-    result.innerHTML += "<br />URI representation: " + n2.to_uri();
-
-
-    var n4 = new Name('/a/b');
-    var n5 = new Name('/a/b/c/d');
-
-    result.innerHTML += "<p>" + n4.to_uri() + ' is a prefix of ' + n5.to_uri() + '? ' + n4.isPrefixOf(n5) + "</p>";
-    
-}
-
+        
+//        alert(XML.innerHTML);
+//        console.log(xmlDoc.getElementsByTagName("IdentityPolicy")[0].getElementsByTagName("DataRegex")[0].childNodes[0].nodeValue);
+ 
+//        console.log(tmp);
+//        console.log(xmlDoc.IdentityPolicy.DataRegex);
+/*        var pentry = new PolicyEntry(xmlDoc);
+        console.log(pentry.dataRegex);
+        console.log(pentry.signerRegex);
+//        pentry.parse("^(<>*)<DNS>(<>*)$", "^(<>*)<DNS>(<>*)<><NDNCERT>", ">=", "\1\2", "\1\2", "true");
+        var _name = new Name("/ndn/ucla/yingdi/DNS/laptop/");
+        var _keyloc = new Name("/ndn/ucla/DNS/yingdi/zsk-12345678/NDNCERT/");
+        console.log(pentry.checkMatching(_name,_keyloc));
+*/ 
+//        _name = new Name("/ndn/DNS/ucla.edu/NDNCERT/124");
+/*        var backRefManager= new BackRefManager();
+        
+        topMatcher = new TopMatcher("^(<>*)<DNS>(<>*)<NDNCERT>", backRefManager);
+        topMatcher.compile();
+        console.log(backRefManager.getNum());
+//        console.log(topMatcher);
+        //            console.log(patternList);
+        console.log(topMatcher.match(_name,0,5));
+        console.log(topMatcher.expand("\\1\\2"));
+*/ 
+    };
     </script>
 
 </head>

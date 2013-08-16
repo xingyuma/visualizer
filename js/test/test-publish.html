@@ -13,20 +13,30 @@ function testPublish () {
         console.log(inst.name.to_uri());
         var content = ndn.default_key.publicKeyPem;
         var nameStr = inst.name.to_uri();
-        if (nameStr == "/aa/bb/1.txt")
+        if (nameStr == "/aa/bb/cc/1.txt")
         {
-            var name = new Name("/aa/bb/ID-CERT");
+            var name = new Name("/aa/bb/cc/ID-CERT");
             //                console.log(name);
             //               console.log(typeof name);
             var keyname = new KeyName(name);
         }
-        else
-        {
-            if (nameStr == "/aa/bb/ID-CERT" || nameStr == "/aa/ID-CERT"){
-                var name = new Name("/aa/ID-CERT");
-                var keyname = new KeyName(name);
-                content = ndn.default_key.publicKeyPem;
-            }
+        if (nameStr == "/aa/bb/cc/ID-CERT"){
+            
+            var name = new Name("/aa/bb/ID-CERT");
+            var keyname = new KeyName(name);
+            content = ndn.default_key.publicKeyPem;
+        }
+        if (nameStr == "/aa/bb/ID-CERT"){
+            
+            var name = new Name("/xx/ID-CERT");
+            var keyname = new KeyName(name);
+            content = ndn.default_key.publicKeyPem;
+        }
+        if (nameStr == "/xx/ID-CERT"){
+            
+            var name = new Name("/xx/ID-CERT");
+            var keyname = new KeyName(name);
+            content = ndn.default_key.publicKeyPem;
         }
         var keyPara = {keyName: keyname};
 //        var si = new SignedInfo();
@@ -47,12 +57,14 @@ function testPublish () {
     var mykey = ndn.getDefaultKey();
 
     ndn.onopen = function () {
-        var n1 = new Name('/aa/bb/1.txt');
+        var n1 = new Name('/aa/bb/cc/1.txt');
         ndn.registerPrefix(n1, onInterest);
-        var n2 = new Name('/aa/bb/ID-CERT');
+        var n2 = new Name('/aa/bb/cc/ID-CERT');
         ndn.registerPrefix(n2, onInterest);
-        var n3 = new Name('/aa/ID-CERT');
+        var n3 = new Name('/aa/bb/ID-CERT');
         ndn.registerPrefix(n3, onInterest);
+        var n5 = new Name('/xx/ID-CERT');
+        ndn.registerPrefix(n5, onInterest);
         console.log('Prefix registered.');
     };
 

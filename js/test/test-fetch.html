@@ -14,6 +14,7 @@
                     console.log('Content: ' + escape(DataUtils.toString(co.content)));
                     console.log('ContentObject in XML representation:');
                     console.log(co.to_xml());
+                    console.log();
                 };
                 
                 var onTimeout = function (interest) {
@@ -22,19 +23,16 @@
                     ndn.close();
                 };
                 
-                    var ndn = new NDN({host:"127.0.0.1"});
-                console.log("1");
+                var ndn = new NDN();
                 ndn.onopen = function () {
-                    var n = new Name('/ndn/ucla.edu/alice/mHealth/20130625/D-KEY');
+                    var n = new Name('/ndn/DNS/edu/ucla/ns/FH/%FD%05%1E%83%E4%E0%F5');
                     var template = new Interest();
-                    template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;  // bypass cache in ccnd
+//                    template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;  // bypass cache in ccnd
                     template.interestLifetime = 1000;
-                    ndn.expressInterest(n, template, onData, onTimeout);
+                    ndn.expressInterest(n, null, onData, onTimeout);
                     console.log('Interest expressed.');
                 };
-                console.log("2");
                 ndn.connect();
-                console.log("3");
                 
                 console.log('Started...');
             }

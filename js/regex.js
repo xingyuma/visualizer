@@ -191,6 +191,8 @@ var ComponentSetMatcher = function(_expr, _backRefManager, _include) {
 var BackRefManager = function() {
     this.m_backRefs = new Array();
     
+    this.matchedItem = new Array();
+    
     this.pushRef = function(_matcher){
         var last = this.m_backRefs.length;
         this.m_backRefs.push(_matcher);
@@ -201,6 +203,14 @@ var BackRefManager = function() {
         this.m_backRefs.pop();
         return this.m_backRefs.length;
     }
+    
+    this.getNum = function() {
+        return this.m_backRefs.length;
+    }
+    
+    this.getBackRefIndex = function(i) {
+        return this.m_backRefs[i];
+    }
 };
 
 
@@ -209,6 +219,7 @@ var BackRefMatcher = function(_expr, _backRefManager) {
     this.m_expr = _expr;
     this.m_backRefManager  =_backRefManager;
     this.m_matcherList = new Array();
+    this.m_matchResult = null;
     
     this.compile = function(){
         var last = this.m_expr.length - 1;
@@ -222,6 +233,18 @@ var BackRefMatcher = function(_expr, _backRefManager) {
         }
     }
 
+    this.match = function(_name, offset, len){
+        //    console.log(_name.to_uri());
+        //    console.log(offset+"  "+len);
+        this.m_matchResult = new Name();
+        if (this.recursiveMatch(0,_name, offset, len)) {
+            for (var i = 0 ; i < len ; i++){
+                this.m_matchResult.append(DataUtils.toString(_name.getComponent(offset + i)));
+            }
+            return true;
+        }else
+            return false;
+    };
 };
 
 var RepeatMatcher = function(_expr, _backRefManager, indicator) {
@@ -483,7 +506,18 @@ var TopMatcher = function(_expr, _backRefManager) {
         var matcher = new PatternListMatcher(expr, this.m_backRefManager);
         matcher.compile();
         this.m_matcherList.push(matcher);
+        console.log();
         return true;
+    }
+
+    this.expand = function(_expandString) {
+        var exp = _expandString.split("\\");
+//        console.log(exp);
+        var tmp = "";
+        for (var i = 1 ; i < exp.length ; i++) {
+            tmp = tmp.concat(_backRefManager.m_backRefs[parseInt(i) - 1].m_matchResult.to_uri());
+        }
+        return tmp;
     }
 };
 
