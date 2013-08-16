@@ -22,19 +22,14 @@
 	<script type="text/javascript">
         var policy = new Policy();
         
-/*        var s = "<IdentityPolicy><DataRegex>^(&lt;&gt;*)&lt;DNS&gt;(&lt;&gt;*)$</DataRegex><SignerRegex>^(&lt;&gt;*)&lt;DNS&gt;(&lt;&gt;*)&lt;&gt;&lt;NDNCERT&gt;</SignerRegex><Op>&gt;=</Op><DataExpand>\\1\\2</DataExpand><SignerExpand>\\1\\2</SignerExpand><MustVerify>1</MustVerify></IdentityPolicy>";
-        var parser=new DOMParser();
-        xmlDoc=parser.parseFromString(s,"text/xml");
-        policy.addPolicyEntry(new PolicyEntry(xmlDoc,"xml"));
-*/
         policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<bb>)<ID-CERT>","(<xx>)<ID-CERT>","**","\\1","\\1","1"],"array"));
-        policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)<><ID-CERT>","(<aa>)(<>*)<ID-CERT>",">=","\\1\\2","\\1\\2","1"],"array"));
+        policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)<><ID-CERT>","(<aa>)(<>*)<ID-CERT>","==","\\1\\2","\\1\\2","1"],"array"));
         policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)[^<ID-CERT>]","(<aa>)(<>*)<ID-CERT>",">=","\\1\\2","\\1\\2","1"],"array"));
         
         var paper = null;
         var now;//= new Date();
         window.onload = function () {
-            paper = Raphael(50, 250, 800, 1800);
+            paper = Raphael(50, 250, 400, 1800);
         }
         function uiOutput(_list,flag) {
             paper.clear();
@@ -92,6 +87,13 @@
         }
         
         function addPolicy() {
+            var x1 = document.getElementById('add_data_regex').value;
+            var x2 = document.getElementById('add_key_regex').value;
+            var x3 = document.getElementById('add_op').value;
+            var x4 = document.getElementById('add_data_expand').value;
+            var x5 = document.getElementById('add_key_expand').value;
+            var x6 = document.getElementById('add_must_verify').value;
+            policy.addPolicyEntry(new PolicyEntry([x1,x2,x3,x4,x5,x6],"array"));
             policy.addPolicyEntry(new PolicyEntry(document.getElementById('addPolicy').value));
         }
         
@@ -175,7 +177,33 @@
         <div id="CONTENT">
             <h3>Policy </h3>
             <div class="BOX">
-                <input id = "addPolicy" type="text" class="form-control" style="width: 200px;">
+                <table>
+                    <tr><td>
+                        <th><div style='font-size:30'>data regex</div></th>
+                        <th><input id = "add_data_regex" type="text" class="form-control" style="width: 200px;"></th>
+                    </td></tr>
+                    <tr><td>
+                        <th><div style='font-size:30'>key regex</div></th>
+                        <th><input id = "add_key_regex" type="text" class="form-control" style="width: 200px;"></th>
+                    </td></tr>
+                    <tr><td>
+                        <th><div style='font-size:30'>op</div></th>
+                        <th><input id = "add_op" type="text" class="form-control" style="width: 200px;"></th>
+                    </td></tr>
+                    <tr><td>
+                        <th><div style='font-size:30'>data expand</div></th>
+                        <th><input id = "add_data_expand" type="text" class="form-control" style="width: 200px;"></th>
+                    </td></tr>
+                    <tr><td>
+                        <th><div style='font-size:30'>key expand</div></th>
+                        <th><input id = "add_key_expand" type="text" class="form-control" style="width: 200px;"></th>
+                    </td></tr>
+                    <tr><td>
+                        <th><div style='font-size:30'>must verify</div></th>
+                        <th><input id = "add_must_verify" type="text" class="form-control" style="width: 200px;"></th>
+                    </td></tr>                </table>
+                
+
                     <button  type="submit" class="btn btn-default" onclick="addPolicy()">Add Policy</button>
                     <button  type="submit" class="btn btn-default" onclick="showPolicy()">Show Policy</button>
                     </textarea>
