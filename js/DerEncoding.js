@@ -59,7 +59,7 @@ var CertificateKey = function(/*str*/_algorithmName, keybit) {
     var algorithmName = new KJUR.asn1.x509.AlgorithmIdentifier({'name':_algorithmName});
     var keyBit = new KJUR.asn1.DERBitString();
     keybit = '00'+keybit;
-    console.log(keybit);
+//    console.log(keybit);
     keyBit.setHexValueIncludingUnusedBits(keybit);
     //                console.log(keyBit);
     var seq3 = new KJUR.asn1.DERSequence({'array':[algorithmName, keyBit]});

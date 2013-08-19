@@ -12,22 +12,20 @@ HEADER {
 }
 WRAPPER {
 	margin:0 auto;
-	width:880px;
+	width:800px;
 	padding:0 10px;
 	overflow:auto;
 }
 CONTENT {
-	margin-left:170px;
+	margin:0 auto;
 	_height:1%;
 }
 SIDE {
 	float:left;
-	width:170px;
 }
 FOOTER {
 	clear:both;
 	_height:1%;
 	margin:0 auto;
 	width:900px;
-	height:121px;
 }

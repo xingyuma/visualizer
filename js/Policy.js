@@ -103,7 +103,7 @@ function Policy() {
     
     this.addPolicyEntry = function(policyEntry) {
 //        alert(policyEntry.prefix);
-        var result = this.getPolicyByPrefix(policyEntry.dataExpand);
+        var result = this.getPolicyByPrefix(policyEntry.dataRegex);
         if (result == null)
             this.PolicyStore.push(policyEntry);
         else

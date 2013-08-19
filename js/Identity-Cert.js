@@ -56,6 +56,16 @@ var IdentityVerify = function() {
         }
     };
     
+    this.getKeyDer = function(_str) {
+        var cd = new CertificateDecode(DataUtils.toString(_str));
+        cd.parse();
+//        console.log(cd.keyBit);
+        var tmp = cd.keyBit.substring(3,cd.keyBit.length);
+//        console.log(tmp);
+        var key = new Key();
+        key.publicKeyDer = DataUtils.toNumbers(tmp);
+        return key;
+    }
     
     this.verifySigning = function(content, key) {
         return content.verify(key);
@@ -65,13 +75,9 @@ var IdentityVerify = function() {
 
         nameStr = escape(content.name.to_uri());
         keyName = content.signedInfo.locator.keyName.name.to_uri();
-        console.log(nameStr);
-        console.log(keyName);
         issuerName = new Name(nameStr);
-        var key = new Key();
-        key.publicKeyPem = DataUtils.toString(content.content);
-        key.publicToDER();
-        
+        var key = this.getKeyDer(content.content);
+        key.readDerPublicKey(key.publicKeyDer);    
         if (this.chain.length >= 1) {
             chainLast = this.chain[this.chain.length - 1];
             if (!chainLast.verify(key)) {
@@ -87,7 +93,7 @@ var IdentityVerify = function() {
         
         for (var i = 0; i < this.trusted.length; i++) {
             if (issuerName.equals(this.trusted[i].key_name) &&
-                DataUtils.toString(content.content) == key.publicKeyPem) {
+                this.trusted[i].key == key.publicKeyPem) {
 //                console.log(DataUtils.toString(content.content));
  //               console.log(key.publicKeyPem);
                 self.findFlag = true;

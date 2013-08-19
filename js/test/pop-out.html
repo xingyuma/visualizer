@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <script language=JavaScript>
+            
+            var result = window.name;
+            
+            </script>
+    </head>
+    <script type="text/javascript" src="./raphael-min.js"></script>
+    <script type="text/javascript" src="../build/ndn.js"></script>
+
+    
+    <body>
+        <div id=goesHere></div>
+        
+        <script>
+            var list = result.split(',');
+            var _list = [];
+            for (var i = 0 ; i < list.length - 2; i++) {
+                _list.push(list[i]);
+            }
+            console.log(_list);
+            var paper = Raphael(50, 50, 500, 1800);
+                paper.clear();
+                var start = [];
+                var end = [];
+                var lasty = 0;
+//                var now2 = new Date();
+//                var datetime = now2.getFullYear()+'/'+(now2.getMonth()+1)+'/'+now2.getDay();
+//                datetime += ' '+now2.getHours()+':'+now2.getMinutes()+':'+now2.getSeconds()+':'+now2.getMilliseconds();
+                //            console.log(now2.getTime());
+                //            console.log(datetime);
+                //            alert(now2.getTime() - now.getTime());
+                for (var i = 0; i < _list.length - 1; i++) {
+                    var width = 200;
+                    var height  = 50;
+                    var x = 140;
+                    var y = lasty + 40 ;
+                    var rect = this.paper.rect(x, y , width, height, 10);
+                    var txt = _list[i];
+                    var line_cap = 20;
+                    var line_number = Math.floor(txt.length/line_cap);
+                    var tmp_txt = "";
+                    for (var j = 0 ; j < line_number; j++) {
+                        //                    console.log(txt.substring(j*line_cap,line_cap));
+                        console.log(j*line_cap);
+                        console.log(j*line_cap + line_cap -1);
+                        tmp_txt += txt.substring(j*line_cap,j*line_cap + line_cap);
+                        tmp_txt += "\n";
+                    }
+                    console.log(line_number * line_cap);
+                    console.log(txt.length);
+                    tmp_txt += txt.substring((line_number) * line_cap, txt.length);
+                    console.log(tmp_txt);
+                    var t = this.paper.text(x+100, y+20, tmp_txt);
+                    t.attr("font-size",15);
+                    lasty = y + height;
+                    start[i] = y;
+                    end[i] = lasty;
+                    //                var c = this.paper.image("Arrow.gif",x+100,end[i]+5, 40, start[i+1] - end[i] - 10);
+                }
+                for (var i = 0 ; i < _list.length - 2 ; i++) {
+                    var c = this.paper.image("Arrow.gif",220,end[i]+5, 40, start[i+1] - end[i] - 10);
+                }
+                
+                if (_list[_list.length - 1] == "true") {
+                    var t = this.paper.text(250,end[_list.length - 2] + 50, "verification successful!");
+                    t.attr("font-size",20);
+                }
+                else {
+                    var t = this.paper.text(250,end[_list.length - 2] + 50, "verification unsuccessful!");
+                    t.attr("font-size",20);
+                }
+
+                var t = this.paper.text(250, end[_list.length - 2] + 100, "time used: "+ (parseInt(list[list.length - 1]) - parseInt(list[list.length - 2])) +" milliseconds");
+                t.attr("font-size",20);
+        </script>
+        
+    </body>
+</html>

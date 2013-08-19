@@ -3,6 +3,14 @@
     <meta charset="utf-8">
     <title>NDN publishing test</title>
 	
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.9.0/build/yahoo/yahoo-min.js"></script>
+        
+        <script type="text/javascript" src="../ext/asn1-1.0.js"></script>
+        <script type="text/javascript" src="../DerEncoding.js"></script>
+        <script type="text/javascript" src="../ext/x509-1.1.js"></script>
+        <script type="text/javascript" src="../ext/asn1x509-1.0.js"></script>
+        <script type="text/javascript" src="../ext/ext/ext.js"></script>
+        
     <script src="../build/ndn.js"></script>
 
     <script>
@@ -12,6 +20,16 @@ function testPublish () {
         console.log('Interest received in callback.');
         console.log(inst.name.to_uri());
         var content = ndn.default_key.publicKeyPem;
+        var cert = new CertificateEncoding();
+        cert.setTime('20130718010203Z','20130719040506Z');
+        cert.addCertSubject('2.5.4.10','UCLA');
+        cert.addCertSubject('2.5.4.10','UCLA');
+//        console.log(ndn.default_key.publicKeyDer);
+        cert.setKey('rsaEncryption',DataUtils.toHex(ndn.default_key.publicKeyDer));
+//        console.log(DataUtils.toHex(ndn.default_key.publicKeyDer));
+        cert.setCertExtension('2.5.4.11',true,'2324');
+        content = cert.getCert();
+//        console.log(content);
         var nameStr = inst.name.to_uri();
         if (nameStr == "/aa/bb/cc/1.txt")
         {
@@ -24,19 +42,19 @@ function testPublish () {
             
             var name = new Name("/aa/bb/ID-CERT");
             var keyname = new KeyName(name);
-            content = ndn.default_key.publicKeyPem;
+//            content = ndn.default_key.publicKeyPem;
         }
         if (nameStr == "/aa/bb/ID-CERT"){
             
             var name = new Name("/xx/ID-CERT");
             var keyname = new KeyName(name);
-            content = ndn.default_key.publicKeyPem;
+ //           content = ndn.default_key.publicKeyPem;
         }
         if (nameStr == "/xx/ID-CERT"){
             
             var name = new Name("/xx/ID-CERT");
             var keyname = new KeyName(name);
-            content = ndn.default_key.publicKeyPem;
+ //           content = ndn.default_key.publicKeyPem;
         }
         var keyPara = {keyName: keyname};
 //        var si = new SignedInfo();

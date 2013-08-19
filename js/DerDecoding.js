@@ -4,7 +4,7 @@
 
 var CertificateDecode = function(_str) {
     this.m_str = readASN1(_str);
-    console.log(this.m_str);
+//    console.log(this.m_str);
     var offset = new Array();
     this.keyBit = null;
     this.parse = function() {
