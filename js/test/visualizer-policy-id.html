@@ -24,7 +24,6 @@
     
 	<script type="text/javascript">
         var policy = new Policy();
-        
         policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<bb>)<ID-CERT>","(<xx>)<ID-CERT>","**","\\1","\\1","1"],"array"));
         policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)<><ID-CERT>","(<aa>)(<>*)<ID-CERT>","==","\\1\\2","\\1\\2","1"],"array"));
         policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)[^<ID-CERT>]","(<aa>)(<>*)<ID-CERT>",">=","\\1\\2","\\1\\2","1"],"array"));
@@ -158,10 +157,13 @@
                                 "PnXUsAsjKKXgOaKoMJr9NZXPqlBbJSrT0h5590hCm2ePPUVkvJKsOX6gCFnptbLz\n" +
                                 "F7pvb3zKDc+zXjyHPwIDAQAB\n" +
                                 "-----END PUBLIC KEY-----"} ];
-            id.init_para(trust_anchor,policy,uiOutput);
+            var _certificateStore = new CertificateStore();
+            _certificateStore.setSize(2);
+            id.init_para(trust_anchor,policy,_certificateStore,uiOutput);
 //            console.log(trust_anchor);
             now = new Date();
             id.init(document.getElementById('query').value,policy,uiOutput);
+//            console.log(_certificateStore.store.length);
  //           id.init("/aa/bb/cc/1.txt");
 //            document.getElementById('result').innerHTML = "dsfads";
 //            console.log(id.chain);

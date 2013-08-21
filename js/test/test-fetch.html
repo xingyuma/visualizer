@@ -25,7 +25,7 @@
                 
                 var ndn = new NDN();
                 ndn.onopen = function () {
-                    var n = new Name('/ndn/DNS/edu/ucla/ns/FH/%FD%05%1E%83%E4%E0%F5');
+                    var n = new Name('/ndn/ucla.edu/DNS/irl/NS ');
                     var template = new Interest();
 //                    template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;  // bypass cache in ccnd
                     template.interestLifetime = 1000;

@@ -20,6 +20,10 @@ var PolicyEntry = function PolicyEntry(_item, type){
         this.signerExpand = _item[4];
         this.mustVerify = _item[5];
     }
+    this.topData = null;
+    this.topSigner = null;
+    this.backData= new BackRefManager();
+    this.backSigner = new BackRefManager();
 };
 
 PolicyEntry.prototype.get = function(dataRegex, signerRegex,op,dataExpand, signerExpand, mustVerify) {
@@ -43,6 +47,19 @@ PolicyEntry.prototype.adjust = function (_str) {
     return tmp;
 }
 
+PolicyEntry.prototype.checkSyntex = function() {
+    this.topData = new TopMatcher(this.dataRegex, this.backData);
+    this.topSigner = new TopMatcher(this.signerRegex, this.backSigner);
+    try {
+        if (this.topData.compile() && this.topSigner.compile()){
+            return true;
+        }
+    }
+    catch(err) {
+        return false;
+    }
+}
+
 PolicyEntry.prototype.generateXML = function() {
     var tmp = {};
     tmp["DataRegex"] = this.dataRegex;
@@ -64,23 +81,17 @@ PolicyEntry.prototype.checkMatching = function(_name,_keyLocator){
     if (this.mustVerify == "0") {
         return true;
     } else {
-        var backData= new BackRefManager();
-//        console.log(this.dataRegex);
-        topData = new TopMatcher(this.dataRegex, backData);
-        topData.compile();
+//        topData = new TopMatcher(this.dataRegex, backData);
+//        topData.compile();
 
-        if (topData.match(_name, 0,_name.components.length)) {
-            var backSigner= new BackRefManager();
-            topSigner = new TopMatcher(this.signerRegex, backSigner);
-            topSigner.compile();
-            if (topSigner.match(_keyLocator, 0, _keyLocator.components.length)) {
-                var dataE = new Name(topData.expand(this.dataExpand));
-                var signerE = new Name(topSigner.expand(this.signerExpand));
-/*                console.log(this.dataRegex);
-                console.log(this.signerRegex);
-                console.log(dataE.to_uri());
-                console.log(signerE.to_uri());
- */             if (this.op == ">=") {
+        if (this.topData.match(_name, 0,_name.components.length)) {
+//            var backSigner= new BackRefManager();
+//            topSigner = new TopMatcher(this.signerRegex, backSigner);
+//            topSigner.compile();
+            if (this.topSigner.match(_keyLocator, 0, _keyLocator.components.length)) {
+                var dataE = new Name(this.topData.expand(this.dataExpand));
+                var signerE = new Name(this.topSigner.expand(this.signerExpand));
+                if (this.op == ">=") {
                     if (signerE.isPrefixOf(dataE)) {
                         return true;
                     }
@@ -98,16 +109,18 @@ PolicyEntry.prototype.checkMatching = function(_name,_keyLocator){
     return false;
 };
 
-function Policy() {
+var Policy = function() {
     this.PolicyStore = new Array();
     
     this.addPolicyEntry = function(policyEntry) {
 //        alert(policyEntry.prefix);
-        var result = this.getPolicyByPrefix(policyEntry.dataRegex);
-        if (result == null)
-            this.PolicyStore.push(policyEntry);
-        else
-            result = policyEntry;
+        if (policyEntry.checkSyntex()) {
+            var result = this.getPolicyByPrefix(policyEntry.dataRegex);
+            if (result == null)
+                this.PolicyStore.push(policyEntry);
+            else
+                result = policyEntry;
+        }
     };
     
     /*exact match*/
@@ -143,8 +156,13 @@ function Policy() {
 };
 
 
-function CertificateStore(){
+var CertificateStore = function(){
     this.store = new Array();
+    this.size  = 1000;
+    
+    this.setSize = function (_size) {
+        this.size = _size;
+    }
     
     this.findType = function(/*str*/ _name) {
         if (_name.match("ID-CERT") != null){
@@ -166,6 +184,9 @@ function CertificateStore(){
             this.store.push(certificateEntry);
         else
             result = certificateEntry;
+        if (this.store.length > this.size) {
+            this.store.shift();
+        }
     };
     
     this.getCertificateByName = function(/*str*/name){

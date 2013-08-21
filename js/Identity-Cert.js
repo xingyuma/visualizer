@@ -2,7 +2,8 @@ var IdentityVerify = function() {
     
     this.trusted = new Array();//new Name("/aa/ID-CERT");
     this.chain = new Array();
-    this.certificateStore = new CertificateStore();
+    this.certificateStore = null;
+//    this.certificateStore = new CertificateStore();
     this.findFlag = false;
     this.policy = null;
     this.callback = null;
@@ -33,9 +34,10 @@ var IdentityVerify = function() {
         };
     }
     
-    this.init_para = function(trust_array, policy,_callback) {
+    this.init_para = function(trust_array, policy, _certificateStore, _callback) {
         this.policy = policy;
         this.callback = _callback;
+        this.certificateStore = _certificateStore;
         this.trusted = trust_array;
     }
     
@@ -94,8 +96,6 @@ var IdentityVerify = function() {
         for (var i = 0; i < this.trusted.length; i++) {
             if (issuerName.equals(this.trusted[i].key_name) &&
                 this.trusted[i].key == key.publicKeyPem) {
-//                console.log(DataUtils.toString(content.content));
- //               console.log(key.publicKeyPem);
                 self.findFlag = true;
                 callback(self.chain,true);
                 ndn.close();

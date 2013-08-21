@@ -99,6 +99,7 @@ var ComponentSetMatcher = function(_expr, _backRefManager, _include) {
                 var lastIndex = this.m_expr.length - 1;
                 if (this.m_expr[lastIndex] != ']') {
                     console.log("error");
+                    throw "component set error";
                 }
                 if (this.m_expr[1] == '^') {
                     this.m_include = false;
@@ -127,6 +128,7 @@ var ComponentSetMatcher = function(_expr, _backRefManager, _include) {
         while (index < last) {
             if (this.m_expr[index] != '<') {
                 console.log("error");
+                throw "compile multiple error";
             }
             tmp_index = index + 1;
             index = this.extractComponent(tmp_index);
@@ -151,6 +153,7 @@ var ComponentSetMatcher = function(_expr, _backRefManager, _include) {
                     break;
                 case 0:
                     console.log("error");
+                    throw "error";
                     break;
             }
             index++;
@@ -231,6 +234,8 @@ var BackRefMatcher = function(_expr, _backRefManager) {
             this.m_matcherList.push(matcher);
             return true;
         }
+        else
+            return false;
     }
 
     this.match = function(_name, offset, len){
@@ -428,6 +433,7 @@ var PatternListMatcher = function(_expr, _backRefManager) {
                 
             default:
                 console.log("error syntex");
+                throw "error";
                 return -1;
         }
         //        console.log(start+"  "+end);
@@ -444,9 +450,10 @@ var PatternListMatcher = function(_expr, _backRefManager) {
         var rcount = 0;
         
         while(lcount > rcount){
-            if(index >= this.m_expr.length)
+            if(index >= this.m_expr.length) {
                 console.log("error subpattern");
-            
+                throw "error";
+            }
             if(left == this.m_expr[index])
                 lcount++;
             
@@ -474,8 +481,10 @@ var PatternListMatcher = function(_expr, _backRefManager) {
                 if(index == exprSize)
                     break;
             }
-            if(index == exprSize)
+            if(index == exprSize) {
                 console.log("mismatch");
+                throw "error";
+            }
             else
                 return ++index;
         }
@@ -506,7 +515,6 @@ var TopMatcher = function(_expr, _backRefManager) {
         var matcher = new PatternListMatcher(expr, this.m_backRefManager);
         matcher.compile();
         this.m_matcherList.push(matcher);
-        console.log();
         return true;
     }
 
