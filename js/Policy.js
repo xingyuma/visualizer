@@ -9,8 +9,6 @@ var PolicyEntry = function PolicyEntry(_item, type){
     this.dataExpand = null;
     this.signerExpand = null;
     this.mustVerify = null;
-    console.log(type);
-    console.log(typeof type);
     if (type == "xml") {
         var tmp = _item.getElementsByTagName("IdentityPolicy")[0];
         this.dataRegex = tmp.getElementsByTagName("DataRegex")[0].childNodes[0].nodeValue;

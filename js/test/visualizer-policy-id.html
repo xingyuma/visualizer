@@ -74,12 +74,18 @@
                         <tr><td>
                             <th><div style='font-size:30'>must verify  </div></th>
                             <th><input id = "add_must_verify" type="text" class="form-control" style="width: 200px;" value="1"></th>
-                        </td></tr>                </table>
-                    
+                        </td></tr>
+                    </table>
                     
                     <button  type="submit" class="btn btn-default" onclick="addPolicy()">Add Policy</button>
                     <button  type="submit" class="btn btn-default" onclick="showPolicy()">Show Policy</button>
-                    <input type="file" id="files" name="files[]" multiple />
+                    <div class="form-group">
+                        <label class="control-label">Upload Policy File</label>
+                    </div>
+                    <div>
+                        <input type="file" id="files" name="files[]" multiple />
+                    </div>
+
                     </textarea>
                 </div>
                 
@@ -192,11 +198,8 @@
                     //                console.log(tmp);
                     parser=new DOMParser();
                     var xmlDoc=parser.parseFromString(tmp,"text/xml");
-//                    console.log(xmlDoc);
-//                    console.log(xmlDoc.getElementsByTagName("IdentityPolicy")[0].getElementsByTagName("DataRegex")[0].childNodes[0].nodeValue);
-//                    policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<bb>)<ID-CERT>","(<xx>)<ID-CERT>","**","\\1","\\1","1"],"array"));
                     var tt = new PolicyEntry(xmlDoc,"xml");
-//                    console.log(tt);
+                //                    console.log(tt);
                     policy.addPolicyEntry(tt);
  
                 }
@@ -212,7 +215,6 @@
                     reader.onload = (function(theFile) {
                                      return function(e) {
                                      partitionXML(this.result);
-                                     //                                console.log(this.result);
                                      };
                                      })(f);
                     
