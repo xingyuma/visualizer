@@ -1,0 +1,3 @@
+<IdentityPolicy><DataRegex>^(&lt;aa&gt;)(&lt;&gt;*)[^&lt;ID-CERT&gt;]</DataRegex><SignerRegex>(&lt;aa&gt;)(&lt;&gt;*)&lt;ID-CERT&gt;</SignerRegex><Op>&gt;=</Op><DataExpand>\1\2</DataExpand><SignerExpand>\1\2</SignerExpand><MustVerify>1</MustVerify></IdentityPolicy>
+<IdentityPolicy><DataRegex>^(&lt;aa&gt;)(&lt;bb&gt;)&lt;ID-CERT&gt;</DataRegex><SignerRegex>(&lt;xx&gt;)&lt;ID-CERT&gt;</SignerRegex><Op>**</Op><DataExpand>\1</DataExpand><SignerExpand>\1</SignerExpand><MustVerify>1</MustVerify></IdentityPolicy>
+<IdentityPolicy><DataRegex>^(&lt;aa&gt;)(&lt;&gt;*)&lt;&gt;&lt;ID-CERT&gt;</DataRegex><SignerRegex>(&lt;aa&gt;)(&lt;&gt;*)&lt;ID-CERT&gt;</SignerRegex><Op>==</Op><DataExpand>\1\2</DataExpand><SignerExpand>\1\2</SignerExpand><MustVerify>1</MustVerify></IdentityPolicy>

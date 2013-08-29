@@ -1,253 +1,229 @@
 <?xml version = "1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "DTD/xhtml1-strict.dtd">
-<!-- 
-	See COPYING for copyright and distribution information.
--->
+<!--
+ See COPYING for copyright and distribution information.
+ -->
 <html xmlns = "http://www.w3.org/1999/xhtml">
-
-<head>    
-	<title>Visualizer</title>
-
-    <script type="text/javascript" src="../build/ndn.js"></script>
-    <script type="text/javascript" src="../Policy.js"></script>
-    <script type="text/javascript" src="../regex.js"></script>
-    <script type="text/javascript" src="../xml/jsonxmllib.js"></script>
-    <script type="text/javascript" src="./raphael-min.js"></script>
-    <script type="text/javascript" src="../Identity-Cert.js"></script>
-    <script type="text/javascript" src="../asn1decoder.js"></script>
-    <script type="text/javascript" src="../DerDecoding.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="./bootstrap.css" />
-    <link rel="stylesheet" type="text/css" href="./layout.css" />
     
-    
-	<script type="text/javascript">
-        var policy = new Policy();
-        policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<bb>)<ID-CERT>","(<xx>)<ID-CERT>","**","\\1","\\1","1"],"array"));
-        policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)<><ID-CERT>","(<aa>)(<>*)<ID-CERT>","==","\\1\\2","\\1\\2","1"],"array"));
-        policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)[^<ID-CERT>]","(<aa>)(<>*)<ID-CERT>",">=","\\1\\2","\\1\\2","1"],"array"));
+    <head>
+        <title>Visualizer</title>
         
-        var paper = null;
-        var now;//= new Date();
-        window.onload = function () {
-//            paper = Raphael(0, 400, 500, 1800);
-        }
+        <script type="text/javascript" src="../build/ndn.js"></script>
+        <script type="text/javascript" src="../Policy.js"></script>
+        <script type="text/javascript" src="../regex.js"></script>
+        <script type="text/javascript" src="../xml/jsonxmllib.js"></script>
+        <script type="text/javascript" src="./raphael-min.js"></script>
+        <script type="text/javascript" src="../Identity-Cert.js"></script>
+        <script type="text/javascript" src="../asn1decoder.js"></script>
+        <script type="text/javascript" src="../DerDecoding.js"></script>
         
-        function uiOutput(_list,flag) {
-            var tmp = [];
-            for (var i = 0 ; i < _list.length ;i++) {
-                tmp[i] = _list[i].name.to_uri();
-            }
-            var now2 = new Date();
-//            now2.getTime();
-//            console.log(now2.getTime() - now.getTime());
-            var par = [tmp,flag,now.getTime(),now2.getTime()];
-            var rr = window.open ('pop-out.html',par);
-     /*
-            paper.clear();
-            var start = [];
-            var end = [];
-            var lasty = 0;
-            var now2 = new Date();
-            var datetime = now2.getFullYear()+'/'+(now2.getMonth()+1)+'/'+now2.getDay();
-            datetime += ' '+now2.getHours()+':'+now2.getMinutes()+':'+now2.getSeconds()+':'+now2.getMilliseconds();
-//            console.log(now2.getTime());
-//            console.log(datetime);
-//            alert(now2.getTime() - now.getTime());
-            for (var i = 0; i < _list.length; i++) {
-                var width = 200;
-                var height  = 50;
-                var x = 140;
-                var y = lasty + 40 ;
-                var rect = this.paper.rect(x, y , width, height, 10);
-                var txt = _list[i].name.to_uri();
-                var line_cap = 20;
-                var line_number = Math.floor(txt.length/line_cap);
-                var tmp_txt = "";
-                for (var j = 0 ; j < line_number; j++) {
-//                    console.log(txt.substring(j*line_cap,line_cap));
-                    console.log(j*line_cap);
-                    console.log(j*line_cap + line_cap -1);
-                    tmp_txt += txt.substring(j*line_cap,j*line_cap + line_cap);
-                    tmp_txt += "\n";
-                }
-                console.log(line_number * line_cap);
-                console.log(txt.length);
-                tmp_txt += txt.substring((line_number) * line_cap, txt.length);
-                console.log(tmp_txt);
-                var t = this.paper.text(x+100, y+20, tmp_txt);
-                t.attr("font-size",15);
-                lasty = y + height;
-                start[i] = y;
-                end[i] = lasty;
-//                var c = this.paper.image("Arrow.gif",x+100,end[i]+5, 40, start[i+1] - end[i] - 10);
-            }
-            for (var i = 0 ; i < _list.length -1 ; i++) {
-                var c = this.paper.image("Arrow.gif",220,end[i]+5, 40, start[i+1] - end[i] - 10);
-            }
-            
-            if (flag) {
-                var t = this.paper.text(250,end[_list.length - 1] + 50, "verification successful!");
-                t.attr("font-size",20);
-            }
-            else {
-                var t = this.paper.text(250,end[_list.length - 1] + 50, "verification unsuccessful!");
-                t.attr("font-size",20);
-            }
-            var t = this.paper.text(250, end[_list.length - 1] + 100, "time used: "+ (now2.getTime() - now.getTime()) +" milliseconds");
-            t.attr("font-size",20);
-      */
-        }
+        <link rel="stylesheet" type="text/css" href="./bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="./layout.css" />
         
-        function addPolicy() {
-            var x1 = document.getElementById('add_data_regex').value;
-            var x2 = document.getElementById('add_key_regex').value;
-            var x3 = document.getElementById('add_op').value;
-            var x4 = document.getElementById('add_data_expand').value;
-            var x5 = document.getElementById('add_key_expand').value;
-            var x6 = document.getElementById('add_must_verify').value;
-            policy.addPolicyEntry(new PolicyEntry([x1,x2,x3,x4,x5,x6],"array"));
-//            rr.
-//            rr.document.write("New window opened!");
-        }
         
-        function showPolicy(){
-            
-            var tb = document.getElementById("mytable");
-            for (var i =  tb.rows.length -1; i >= 1; i--) {
-                tb.deleteRow(i);
-            }
-            for (var i = 0 ; i < policy.PolicyStore.length; i++) {
-                var table=document.getElementById("mytable");
-                var row=table.insertRow(-1);
-                var cell1=row.insertCell(0);
-                var cell2=row.insertCell(1);
-                var cell3=row.insertCell(2);
-                var cell4=row.insertCell(3);
-                var cell5=row.insertCell(4);
-                var cell6=row.insertCell(5);
-//                var s1 = policy.PolicyS5ore[i].dataRegex;
-                var text1 = document.createTextNode(policy.PolicyStore[i].dataRegex);
-                var text2 = document.createTextNode(policy.PolicyStore[i].signerRegex);
-                var text3 = document.createTextNode(policy.PolicyStore[i].op);
-                var text4 = document.createTextNode(policy.PolicyStore[i].dataExpand);
-                var text5 = document.createTextNode(policy.PolicyStore[i].signerExpand);
-                var text6 = document.createTextNode(policy.PolicyStore[i].mustVerify);
-                cell1.appendChild(text1);
-                cell2.appendChild(text2);
-                cell3.appendChild(text3);
-                cell4.appendChild(text4);
-                cell5.appendChild(text5);
-                cell6.appendChild(text6);
-//                console.log(policy.PolicyStore[i].generateXML());
-           }
-        }
         
-        function search() {
-
-//            console.log("aaadfas");
-//            var id = IdentityVerifySingleton.getInstance();
-//            id.init("/aa/bb/1.txt",policy);
-            var id = new IdentityVerify();
-            var trust_anchor = [ {key_name: new Name("/xx/ID-CERT"),
-                                key:  "-----BEGIN PUBLIC KEY-----\n" +
-                                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDNpgZFC23yGSLsMo8mzTcmdni\n" +
-                                "pkUHI+i8CYagTEqHO+PnejF9Ep/D+MBvEtPXHSgExsDCHP8X7B6If1df58OWXB9G\n" +
-                                "PnXUsAsjKKXgOaKoMJr9NZXPqlBbJSrT0h5590hCm2ePPUVkvJKsOX6gCFnptbLz\n" +
-                                "F7pvb3zKDc+zXjyHPwIDAQAB\n" +
-                                "-----END PUBLIC KEY-----"} ];
-            var _certificateStore = new CertificateStore();
-            _certificateStore.setSize(2);
-            id.init_para(trust_anchor,policy,_certificateStore,uiOutput);
-//            console.log(trust_anchor);
-            now = new Date();
-            id.init(document.getElementById('query').value,policy,uiOutput);
-//            console.log(_certificateStore.store.length);
- //           id.init("/aa/bb/cc/1.txt");
-//            document.getElementById('result').innerHTML = "dsfads";
-//            console.log(id.chain);
-        }
-	</script>
-	
-
-</head>
-<body >
-    <div id="HEADER">
-        <div class="page-header">
-            <h1>Visualizer</h1>
+        
+        
+    </head>
+    <body >
+        <div id="HEADER">
+            <div class="page-header">
+                <h1>Visualizer</h1>
+            </div>
         </div>
-    </div>
-    
-    <div id="WRAPPER">
-        <div id="SIDE">
-            <h3>Chain Visualization</h3>
-            <div class="BOX">
-                <input id = "query" type="text" class="form-control" style="width: 200px;" value="/aa/bb/cc/1.txt">
-                    <button  type="submit" class="btn btn-default" onclick="search()">Submit</button>
-                    </div>
-            <div class="BOX" id = "resultarea">
+        
+        <div id="WRAPPER">
+            <div id="SIDE">
+                <h3>Chain Visualization</h3>
+                <div class="BOX">
+                    <input id = "query" type="text" class="form-control" style="width: 200px;" value="/aa/bb/cc/1.txt">
+                        <button  type="submit" class="btn btn-default" onclick="search()">Submit</button>
+                        </div>
+                <div class="BOX" id = "resultarea">
+                    
+                </div>
+                
                 
             </div>
-
             
-        </div>
-        
-        <div id="CONTENT">
-            <h3>Policy </h3>
-            <div class="BOX">
-                <table>
-                    <tr><td>
-                        <th><div style='font-size:30; width: 100px' >data regex  </div></th>
-                        <th><input id = "add_data_regex" type="text" class="form-control" style="width: 200px;" value="^(<aa>)(<bb>)<ID-CERT>"></th>
-                    </td></tr>
-                    <tr><td>
-                        <th><div style='font-size:30'>key regex</div></th>
-                        <th><input id = "add_key_regex" type="text" class="form-control" style="width: 200px;" value="(<xx>)<ID-CERT>"></th>
-                    </td></tr>
-                    <tr><td>
-                        <th><div style='font-size:30'>op</div></th>
-                        <th><input id = "add_op" type="text" class="form-control" style="width: 200px;" value="**"></th>
-                    </td></tr>
-                    <tr><td>
-                        <th><div style='font-size:30'>data expand  </div></th>
-                        <th><input id = "add_data_expand" type="text" class="form-control" style="width: 200px;" value="\1"></th>
-                    </td></tr>
-                    <tr><td>
-                        <th><div style='font-size:30'>key expand  </div></th>
-                        <th><input id = "add_key_expand" type="text" class="form-control" style="width: 200px;" value="\1"></th>
-                    </td></tr>
-                    <tr><td>
-                        <th><div style='font-size:30'>must verify  </div></th>
-                        <th><input id = "add_must_verify" type="text" class="form-control" style="width: 200px;" value="1"></th>
-                    </td></tr>                </table>
-                
-
+            <div id="CONTENT">
+                <h3>Policy </h3>
+                <div class="BOX">
+                    <table>
+                        <tr><td>
+                            <th><div style='font-size:30; width: 100px' >data regex  </div></th>
+                            <th><input id = "add_data_regex" type="text" class="form-control" style="width: 200px;" value="^(<aa>)(<bb>)<ID-CERT>"></th>
+                        </td></tr>
+                        <tr><td>
+                            <th><div style='font-size:30'>key regex</div></th>
+                            <th><input id = "add_key_regex" type="text" class="form-control" style="width: 200px;" value="(<xx>)<ID-CERT>"></th>
+                        </td></tr>
+                        <tr><td>
+                            <th><div style='font-size:30'>op</div></th>
+                            <th><input id = "add_op" type="text" class="form-control" style="width: 200px;" value="**"></th>
+                        </td></tr>
+                        <tr><td>
+                            <th><div style='font-size:30'>data expand  </div></th>
+                            <th><input id = "add_data_expand" type="text" class="form-control" style="width: 200px;" value="\1"></th>
+                        </td></tr>
+                        <tr><td>
+                            <th><div style='font-size:30'>key expand  </div></th>
+                            <th><input id = "add_key_expand" type="text" class="form-control" style="width: 200px;" value="\1"></th>
+                        </td></tr>
+                        <tr><td>
+                            <th><div style='font-size:30'>must verify  </div></th>
+                            <th><input id = "add_must_verify" type="text" class="form-control" style="width: 200px;" value="1"></th>
+                        </td></tr>                </table>
+                    
+                    
                     <button  type="submit" class="btn btn-default" onclick="addPolicy()">Add Policy</button>
                     <button  type="submit" class="btn btn-default" onclick="showPolicy()">Show Policy</button>
+                    <input type="file" id="files" name="files[]" multiple />
                     </textarea>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div id="hidDiv" style="position: absolute; display: none; ">
+            <div class="alert alert-success">Policy Error</div>
+        </div>
+        
+        <div id="FOOTER">
+            <div class="BOX">
+                <table id="mytable" cellspacing="0">
+                    <tr>
+                        <th scope="col" >Data Regex</th>
+                        <th scope="col" >Key Regex</th>
+                        <th scope="col" >Op</th>
+                        <th scope="col" >Data Expand</th>
+                        <th scope="col" >Key Expand</th>
+                        <th scope="col" >MustVerify</th>
+                    </tr>
                     </div>
-
         </div>
-    </div>
+        
+        
+        <script type="text/javascript">
+            var policy = new Policy();
+//            policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<bb>)<ID-CERT>","(<xx>)<ID-CERT>","**","\\1","\\1","1"],"array"));
+//            policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)<><ID-CERT>","(<aa>)(<>*)<ID-CERT>","==","\\1\\2","\\1\\2","1"],"array"));
+//            policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<>*)[^<ID-CERT>]","(<aa>)(<>*)<ID-CERT>",">=","\\1\\2","\\1\\2","1"],"array"));
+            var paper = null;
+            var now;//= new Date();
+            
+            function uiOutput(_list,flag) {
+                var tmp = [];
+                for (var i = 0 ; i < _list.length ;i++) {
+                    tmp[i] = _list[i].name.to_uri();
+                }
+                var now2 = new Date();
+                var par = [tmp,flag,now.getTime(),now2.getTime()];
+                var rr = window.open ('pop-out.html',par);
+                
+            }
+            
+            function addPolicy() {
+                var x1 = document.getElementById('add_data_regex').value;
+                var x2 = document.getElementById('add_key_regex').value;
+                var x3 = document.getElementById('add_op').value;
+                var x4 = document.getElementById('add_data_expand').value;
+                var x5 = document.getElementById('add_key_expand').value;
+                var x6 = document.getElementById('add_must_verify').value;
+                policy.addPolicyEntry(new PolicyEntry([x1,x2,x3,x4,x5,x6],"array"));
+                //            rr.
+                //            rr.document.write("New window opened!");
+            }
+            
+            function showPolicy(){
+                
+                var tb = document.getElementById("mytable");
+                for (var i =  tb.rows.length -1; i >= 1; i--) {
+                    tb.deleteRow(i);
+                }
+                for (var i = 0 ; i < policy.PolicyStore.length; i++) {
+                    var table=document.getElementById("mytable");
+                    var row=table.insertRow(-1);
+                    var cell1=row.insertCell(0);
+                    var cell2=row.insertCell(1);
+                    var cell3=row.insertCell(2);
+                    var cell4=row.insertCell(3);
+                    var cell5=row.insertCell(4);
+                    var cell6=row.insertCell(5);
+                    //                var s1 = policy.PolicyS5ore[i].dataRegex;
+                    var text1 = document.createTextNode(policy.PolicyStore[i].dataRegex);
+                    var text2 = document.createTextNode(policy.PolicyStore[i].signerRegex);
+                    var text3 = document.createTextNode(policy.PolicyStore[i].op);
+                    var text4 = document.createTextNode(policy.PolicyStore[i].dataExpand);
+                    var text5 = document.createTextNode(policy.PolicyStore[i].signerExpand);
+                    var text6 = document.createTextNode(policy.PolicyStore[i].mustVerify);
+                    cell1.appendChild(text1);
+                    cell2.appendChild(text2);
+                    cell3.appendChild(text3);
+                    cell4.appendChild(text4);
+                    cell5.appendChild(text5);
+                    cell6.appendChild(text6);
+                    //                console.log(policy.PolicyStore[i].generateXML());
+                }
+            }
+            
+            function search() {
+                
+                var id = new IdentityVerify();
+                var trust_anchor = [ {key_name: new Name("/xx/ID-CERT"),
+                                    key:  "-----BEGIN PUBLIC KEY-----\n" +
+                                    "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDNpgZFC23yGSLsMo8mzTcmdni\n" +
+                                    "pkUHI+i8CYagTEqHO+PnejF9Ep/D+MBvEtPXHSgExsDCHP8X7B6If1df58OWXB9G\n" +
+                                    "PnXUsAsjKKXgOaKoMJr9NZXPqlBbJSrT0h5590hCm2ePPUVkvJKsOX6gCFnptbLz\n" +
+                                    "F7pvb3zKDc+zXjyHPwIDAQAB\n" +
+                                    "-----END PUBLIC KEY-----"} ];
+                var _certificateStore = new CertificateStore();
+                _certificateStore.setSize(2);
+                id.init_para(trust_anchor,policy,_certificateStore,uiOutput);
+                now = new Date();
+                id.init(document.getElementById('query').value,policy,uiOutput);
+            }
+            
+            function partitionXML(_str) {
+                var str_array = _str.split("<IdentityPolicy>");
+                for (var i = 1; i < str_array.length; i++) {
+                    var tmp = "<IdentityPolicy>" + str_array[i];
+                    //                console.log(tmp);
+                    parser=new DOMParser();
+                    var xmlDoc=parser.parseFromString(tmp,"text/xml");
+//                    console.log(xmlDoc);
+//                    console.log(xmlDoc.getElementsByTagName("IdentityPolicy")[0].getElementsByTagName("DataRegex")[0].childNodes[0].nodeValue);
+//                    policy.addPolicyEntry(new PolicyEntry(["^(<aa>)(<bb>)<ID-CERT>","(<xx>)<ID-CERT>","**","\\1","\\1","1"],"array"));
+                    var tt = new PolicyEntry(xmlDoc,"xml");
+//                    console.log(tt);
+                    policy.addPolicyEntry(tt);
+ 
+                }
+            }
+            
+            function handleFileSelect(evt) {
+                var files = evt.target.files; // FileList object
+                
+                // Loop through the FileList and render image files as thumbnails.
+                for (var i = 0, f; f = files[i]; i++) {
+                    var reader = new FileReader();
+                    // Closure to capture the file information.
+                    reader.onload = (function(theFile) {
+                                     return function(e) {
+                                     partitionXML(this.result);
+                                     //                                console.log(this.result);
+                                     };
+                                     })(f);
+                    
+                    // Read in the image file as a data URL.
+                    console.log(f);
+                    reader.readAsText(f);
+                }
+            }
+            
+            document.getElementById('files').addEventListener('change', handleFileSelect, false);
+            </script>
+    </body>
     
-    <div id="hidDiv" style="position: absolute; display: none; ">
-        <div class="alert alert-success">Policy Error</div>
-    </div>
-    
-    <div id="FOOTER">
-        <div class="BOX">
-            <table id="mytable" cellspacing="0">
-                <tr>
-                    <th scope="col" >Data Regex</th>
-                    <th scope="col" >Key Regex</th>
-                    <th scope="col" >Op</th>
-                    <th scope="col" >Data Expand</th>
-                    <th scope="col" >Key Expand</th>
-                    <th scope="col" >MustVerify</th>
-                </tr>
-        </div>
-    </div>
-</body>
-
 </html>

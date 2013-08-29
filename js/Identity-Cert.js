@@ -21,65 +21,13 @@ var IdentityVerify = function() {
         ndn.close();
     };
     
-    this.init = function(name){
-        this.chain = [];
-        this.oriName = name;
-        console.log("init");
-        ndn = new NDN();
-        ndn.connect();
-        
-        ndn.onopen = function () {
-            console.log("onopen called");
-            self.fetch(self.oriName);
-        };
-    }
-    
-    this.init_para = function(trust_array, policy, _certificateStore, _callback) {
-        this.policy = policy;
-        this.callback = _callback;
-        this.certificateStore = _certificateStore;
-        this.trusted = trust_array;
-    }
-    
-    this.fetch = function(/*str*/name) {
-      console.log("fetch  "+name);
-        content  = this.certificateStore.getCertificateByName(name);
-        if (content != null){
-            self.receive(content);
-        }
-        else {
-            var n = new Name(name);
-            var template = new Interest();
-            template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;
-            template.interestLifetime = 1000;
-            ndn.expressInterest(n, template, onData, onTimeout);
-            console.log('Interest expressed.');
-//            ndn.expressInterest(new Name(name), new AsyncGetClosure());
-        }
-    };
-    
-    this.getKeyDer = function(_str) {
-        var cd = new CertificateDecode(DataUtils.toString(_str));
-        cd.parse();
-//        console.log(cd.keyBit);
-        var tmp = cd.keyBit.substring(3,cd.keyBit.length);
-//        console.log(tmp);
-        var key = new Key();
-        key.publicKeyDer = DataUtils.toNumbers(tmp);
-        return key;
-    }
-    
-    this.verifySigning = function(content, key) {
-        return content.verify(key);
-    }
-    
     this.receive = function(content, callback) {
-
+        
         nameStr = escape(content.name.to_uri());
         keyName = content.signedInfo.locator.keyName.name.to_uri();
         issuerName = new Name(nameStr);
         var key = this.getKeyDer(content.content);
-        key.readDerPublicKey(key.publicKeyDer);    
+        key.readDerPublicKey(key.publicKeyDer);
         if (this.chain.length >= 1) {
             chainLast = this.chain[this.chain.length - 1];
             if (!chainLast.verify(key)) {
@@ -89,7 +37,7 @@ var IdentityVerify = function() {
                 return false;
             }
         }
-
+        
         self.chain.push(content);
         self.certificateStore.addCertificateEntry(content);
         
@@ -103,11 +51,71 @@ var IdentityVerify = function() {
             }
         }
         if (!self.policy.verify(nameStr, keyName)) {
-                console.log("policy error");
-                callback(self.chain,false);
-                ndn.close();
-                return false;
+            console.log("policy error");
+            callback(self.chain,false);
+            ndn.close();
+            return false;
         }
         self.fetch(keyName);
     };
+    
+    /*fetch a chain under name*/
+    this.init = function(name){
+        this.chain = [];
+        this.oriName = name;
+        console.log("init");
+        ndn = new NDN();
+        ndn.connect();
+        
+        ndn.onopen = function () {
+            console.log("onopen called");
+            self.fetch(self.oriName);
+        };
+    }
+    
+    this.fetch = function(/*str*/name) {
+        console.log("fetch  "+name);
+        content  = this.certificateStore.getCertificateByName(name);
+        if (content != null){
+            self.receive(content);
+        }
+        else {
+            var n = new Name(name);
+            var template = new Interest();
+            template.answerOriginKind = Interest.ANSWER_NO_CONTENT_STORE;
+            template.interestLifetime = 1000;
+            ndn.expressInterest(n, template, onData, onTimeout);
+            console.log('Interest expressed.');
+            //            ndn.expressInterest(new Name(name), new AsyncGetClosure());
+        }
+    };
 };
+
+
+/**import the trst anchor,policy, certificatestore and set the callback **/
+IdentityVerify.prototype.init_para = function(trust_array, policy, _certificateStore, _callback) {
+    this.policy = policy;
+    this.callback = _callback;
+    this.certificateStore = _certificateStore;
+    this.trusted = trust_array;
+}
+
+/**get key from certificate **/
+IdentityVerify.prototype.getKeyDer = function(_str) {
+    var cd = new CertificateDecode(DataUtils.toString(_str));
+    cd.parse();
+    //        console.log(cd.keyBit);
+    var tmp = cd.keyBit.substring(3,cd.keyBit.length);
+    //        console.log(tmp);
+    var key = new Key();
+    key.publicKeyDer = DataUtils.toNumbers(tmp);
+    return key;
+}
+
+
+IdentityVerify.prototype.verifySigning = function(content, key) {
+    return content.verify(key);
+}
+
+
+
